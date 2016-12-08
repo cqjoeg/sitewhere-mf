@@ -1,0 +1,11 @@
+apply plugin: 'nebula.provided-base'
+
+description = 'SiteWhere MongoDB Implementation'
+dependencies {
+    compile project(':sitewhere-client')
+    compile project(':sitewhere-core')
+    compile group: 'org.springframework', name: 'spring-beans'
+    compile group: 'org.springframework.security', name: 'spring-security-core'
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version:'2.13.0'
+    provided group: 'javax.servlet', name: 'servlet-api', version:'2.3'
+}

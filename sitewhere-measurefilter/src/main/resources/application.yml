@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate.ddl-auto: update
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://127.0.0.1:5432/sitewhere
+    username: sitewhere-admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+    log-abandoned: true
+  data:
+    rest:
+      base-path: /api
+server:
+  context-path: /sitewhere
+  port: 8080
