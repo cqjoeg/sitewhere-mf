@@ -1,5 +1,6 @@
 package com.sitewhere.measurefilter.mvc.domain;
 
+import com.sitewhere.spi.device.field.domain.IDeviceALertDataEntity;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "tb_alert")
-public class DeviceALertDataEntity {
+public class DeviceALertDataEntity implements IDeviceALertDataEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

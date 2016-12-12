@@ -6,6 +6,10 @@ configurations {
 description = 'sitewhere measure filter'
 dependencies {
 
+    compile project(':sitewhere-client')
+    compile project(':sitewhere-core')
+    compile project(':sitewhere-spring')
+
 
     compile group: 'org.springframework.security', name: 'spring-security-config'
     compile group: 'org.springframework.security', name: 'spring-security-core'

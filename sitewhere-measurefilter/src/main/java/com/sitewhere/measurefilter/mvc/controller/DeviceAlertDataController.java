@@ -1,12 +1,11 @@
 package com.sitewhere.measurefilter.mvc.controller;
 
-import com.sitewhere.measurefilter.mvc.domain.DeviceALertDataEntity;
-import com.sitewhere.measurefilter.mvc.service.IDeviceAlertDataService;
-import com.sitewhere.measurefilter.rest.model.search.SearchResults;
-import com.sitewhere.measurefilter.rest.model.search.device.DeviceAlertDataSearchCriteria;
-import com.sitewhere.measurefilter.spi.search.ISearchResults;
-import com.sitewhere.measurefilter.spi.search.device.IDeviceAlertDataSearchCriteria;
-import com.sitewhere.measurefilter.spi.user.SiteWhereRoles;
+import com.sitewhere.rest.model.search.SearchResults;
+import com.sitewhere.rest.model.search.field.DeviceAlertDataSearchCriteria;
+import com.sitewhere.spi.device.field.domain.IDeviceALertDataEntity;
+import com.sitewhere.spi.device.field.service.IDeviceAlertDataService;
+import com.sitewhere.spi.search.ISearchResults;
+import com.sitewhere.spi.user.SiteWhereRoles;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,7 @@ import java.util.Date;
 @Controller
 @CrossOrigin
 @RequestMapping("/device/alert/data")
-public class DeviceAlertDataController {
+public class DeviceAlertDataController extends MFBaseController{
 
     /**
      * Static logger instance
@@ -56,16 +55,16 @@ public class DeviceAlertDataController {
     @RequestMapping(value = "/{hardwareid}", method = RequestMethod.GET)
     @ResponseBody
     @Secured({SiteWhereRoles.REST})
-    public ISearchResults<DeviceALertDataEntity> listDeviceAlertDatas(
+    public ISearchResults<IDeviceALertDataEntity> listDeviceAlertDatas(
             @PathVariable String hardwareid,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "100") int pageSize,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
             HttpServletRequest servletRequest) {
-        IDeviceAlertDataSearchCriteria criteria = new DeviceAlertDataSearchCriteria(page, pageSize, startDate, endDate, hardwareid);
-        Page<DeviceALertDataEntity> pageList = deviceAlertDataService.listDeviceAlertDatas(criteria);
-        return new SearchResults<DeviceALertDataEntity>(pageList.getContent(), pageList.getNumber());
+        DeviceAlertDataSearchCriteria criteria = new DeviceAlertDataSearchCriteria(page, pageSize, startDate, endDate, hardwareid);
+        Page<IDeviceALertDataEntity> pageList = deviceAlertDataService.listDeviceAlertDatas(criteria);
+        return new SearchResults<IDeviceALertDataEntity>(pageList.getContent(), pageList.getNumber());
     }
 
 

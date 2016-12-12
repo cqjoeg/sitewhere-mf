@@ -1,7 +1,8 @@
 package com.sitewhere.measurefilter.rest;
 
-import com.sitewhere.measurefilter.rest.model.common.MetadataProviderEntity;
+
 import com.sitewhere.measurefilter.spi.IResult;
+import com.sitewhere.rest.model.common.MetadataProviderEntity;
 
 import java.io.Serializable;
 import java.util.Map;

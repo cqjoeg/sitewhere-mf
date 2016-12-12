@@ -1,12 +1,10 @@
 package com.sitewhere.device.event.processor;
 
-import com.google.gson.Gson;
 import com.sitewhere.SiteWhere;
-import com.sitewhere.measurefilter.SpringUtil;
-import com.sitewhere.measurefilter.api.IDeviceFieldAPI;
-import com.sitewhere.measurefilter.mvc.domain.DeviceFieldEntity;
-import com.sitewhere.measurefilter.rest.model.device.DeviceFieldDefinition;
+import com.sitewhere.SpringUtil;
 import com.sitewhere.rest.model.device.event.request.DeviceCommandResponseCreateRequest;
+import com.sitewhere.rest.model.device.field.DeviceField;
+import com.sitewhere.rest.model.device.field.DeviceFieldDefinition;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.device.IDevice;
@@ -15,6 +13,8 @@ import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.event.IDeviceCommandResponse;
 import com.sitewhere.spi.device.event.IDeviceEventManagement;
 import com.sitewhere.spi.device.event.request.IDeviceMeasurementsCreateRequest;
+import com.sitewhere.spi.device.field.IDeviceField;
+import com.sitewhere.spi.device.field.service.IDeviceFieldService;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import org.apache.log4j.Logger;
@@ -56,11 +56,9 @@ public class MeasureFilterProcessor extends InboundEventProcessor {
     @Override
     public void onDeviceMeasurementsCreateRequest(String hardwareId, String originator,
                                                   IDeviceMeasurementsCreateRequest request) throws SiteWhereException, BeansException {
-
-        IDeviceFieldAPI deviceFieldAPI = (IDeviceFieldAPI) SpringUtil.getBean("DeviceFieldAPI");
-        DeviceFieldEntity deviceFieldEntity = deviceFieldAPI.listDeviceFieldByHardwareIdAndType(hardwareId, "measurements");
-        String jsonStr = deviceFieldEntity.getDefinition();
-        List<String> list = new Gson().fromJson(jsonStr, DeviceFieldDefinition.class).getKey();
+        IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
+        IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.MEASUREMENTS);
+        List<String> list = ((DeviceFieldDefinition) deviceField.getDefinition()).getKey();
         //过滤
         Iterator iterator = request.getMeasurements().entrySet().iterator();
         while (iterator.hasNext()) {

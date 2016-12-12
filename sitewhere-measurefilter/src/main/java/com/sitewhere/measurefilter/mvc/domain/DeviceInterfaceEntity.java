@@ -1,5 +1,6 @@
 package com.sitewhere.measurefilter.mvc.domain;
 
+import com.sitewhere.spi.device.field.domain.IDeviceInterfaceEntity;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "tb_interface")
-public class DeviceInterfaceEntity {
+public class DeviceInterfaceEntity implements IDeviceInterfaceEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,12 +1,12 @@
 package com.sitewhere.measurefilter.mvc.service.impl;
 
+import com.google.gson.Gson;
 import com.sitewhere.measurefilter.mvc.dao.DeviceFieldRepository;
 import com.sitewhere.measurefilter.mvc.domain.DeviceFieldEntity;
-import com.sitewhere.measurefilter.mvc.service.IDeviceFieldService;
-import com.sitewhere.measurefilter.rest.JsonResult;
-import com.sitewhere.measurefilter.rest.model.device.request.DeviceFieldCreateRequest;
-import com.sitewhere.measurefilter.spi.IResult;
-import com.sitewhere.measurefilter.spi.MFSqlException;
+import com.sitewhere.rest.model.device.field.DeviceField;
+import com.sitewhere.rest.model.device.field.request.DeviceFieldCreateRequest;
+import com.sitewhere.spi.device.field.IDeviceField;
+import com.sitewhere.spi.device.field.service.IDeviceFieldService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import org.springframework.util.ObjectUtils;
  * Created by CQ on 2016/11/20.
  */
 
-@Service
+@Service(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL)
 @Transactional
 public class DeviceFieldServiceImpl implements IDeviceFieldService {
 
@@ -29,7 +29,6 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
     @Autowired
     private DeviceFieldRepository deviceFieldRepository;
 
-
     /**
      * insert device field
      *
@@ -37,19 +36,15 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
      * @return
      */
     @Override
-    public IResult insertDeviceField(DeviceFieldCreateRequest request) {
-        try {
-            DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(request.getHardwareId(), request.getType());
-            if (ObjectUtils.isEmpty(tmp)) {
-                //true means there is no this type's field
-                deviceFieldRepository.save(request.buildDeviceFieldEntity(request));
-            }
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("save error");
+    public IDeviceField insertDeviceField(DeviceFieldCreateRequest request) {
+        DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(request.getHardwareId(), request.getType());
+        if (ObjectUtils.isEmpty(tmp)) {
+            //true means there is no this type's field
+            return DeviceField.copy(deviceFieldRepository.save(buildDeviceFieldEntity(request)));
         }
-        return JsonResult.success("save success", null);
+        return null;
     }
+
 
     /**
      * update device field
@@ -59,35 +54,41 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
      * @return
      */
     @Override
-    public IResult updateDeviceField(String hardwareId, DeviceFieldCreateRequest deviceField) {
-        try {
-            DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(hardwareId, deviceField.getType());
-            tmp.setComments(deviceField.getComments());
-            tmp.setDefinition(deviceField.getDefinitionToString());
-            tmp.setStarted(deviceField.getStarted());
-            deviceFieldRepository.save(tmp);
-            return JsonResult.success("update success", null);
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("Update Error");
-        }
+    public IDeviceField updateDeviceField(String hardwareId, DeviceFieldCreateRequest deviceField) {
+        DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(hardwareId, deviceField.getType());
+        tmp.setComments(deviceField.getComments());
+        tmp.setDefinition(deviceField.getDefinitionToString());
+        tmp.setStarted(deviceField.getStarted());
+        return DeviceField.copy(deviceFieldRepository.save(tmp));
+
     }
 
     @Override
-    public IResult deleteDeviceField(String hardwareId, String type) {
-        try {
-            DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(hardwareId, type);
-            deviceFieldRepository.delete(tmp);
-            return JsonResult.success("delete success", null);
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("update Error");
-        }
+    public void deleteDeviceField(String hardwareId, String type) {
+        DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(hardwareId, type);
+        deviceFieldRepository.delete(tmp);
     }
 
     @Override
-    public DeviceFieldEntity listDeviceFieldByHardwareIdAndType(String hardwareId, String type) {
+    public IDeviceField listDeviceFieldByHardwareIdAndType(String hardwareId, String type) {
         DeviceFieldEntity deviceFieldEntity = deviceFieldRepository.findByHardwareidAndType(hardwareId, type);
-        return deviceFieldEntity;
+        return DeviceField.copy(deviceFieldEntity);
     }
+
+    /**
+     * 创建 DeviceFieldEntity 对象
+     *
+     * @param request
+     * @return
+     */
+    public static DeviceFieldEntity buildDeviceFieldEntity(DeviceFieldCreateRequest request) {
+        return new DeviceFieldEntity(request.getHardwareId(),
+                request.getType(),
+                request.getComments(),
+                request.getCreatedDate(), false,
+                (new Gson()).toJson(request.getDefinition()),
+                request.getStarted()
+        );
+    }
+
 }

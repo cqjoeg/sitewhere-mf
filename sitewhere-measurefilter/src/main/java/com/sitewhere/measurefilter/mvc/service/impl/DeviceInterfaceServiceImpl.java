@@ -3,13 +3,15 @@ package com.sitewhere.measurefilter.mvc.service.impl;
 import com.google.gson.Gson;
 import com.sitewhere.measurefilter.mvc.dao.DeviceInterfaceRepository;
 import com.sitewhere.measurefilter.mvc.domain.DeviceInterfaceEntity;
-import com.sitewhere.measurefilter.mvc.service.IDeviceInterfaceService;
-import com.sitewhere.measurefilter.rest.JsonResult;
-import com.sitewhere.measurefilter.rest.model.device.request.DeviceInterfaceCreateRequest;
-import com.sitewhere.measurefilter.spi.IResult;
-import com.sitewhere.measurefilter.spi.MFSqlException;
-import com.sitewhere.measurefilter.spi.device.request.IDeviceInterfaceCreateRequest;
-import com.sitewhere.measurefilter.spi.search.device.IDeviceInterfaceSearchCriteria;
+import com.sitewhere.rest.model.device.field.DeviceField;
+import com.sitewhere.rest.model.device.field.DeviceInterface;
+import com.sitewhere.rest.model.device.field.request.DeviceInterfaceCreateRequest;
+import com.sitewhere.rest.model.search.field.DeviceInterfaceSearchCriteria;
+import com.sitewhere.spi.device.field.IDeviceField;
+import com.sitewhere.spi.device.field.IDeviceInterface;
+import com.sitewhere.spi.device.field.domain.IDeviceInterfaceEntity;
+import com.sitewhere.spi.device.field.request.IDeviceInterfaceCreateRequest;
+import com.sitewhere.spi.device.field.service.IDeviceInterfaceService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.util.Date;
 
 /**
  * DeviceInterfaceserviceimpl
@@ -39,67 +43,43 @@ public class DeviceInterfaceServiceImpl implements IDeviceInterfaceService {
     private DeviceInterfaceRepository deviceInterfaceRepository;
 
     @Override
-    public IResult insertDeviceInterface(IDeviceInterfaceCreateRequest deviceInterfaceCreateRequest) {
+    public IDeviceInterface insertDeviceInterface(DeviceInterfaceCreateRequest deviceInterfaceCreateRequest) {
 
-        try {
-            DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(deviceInterfaceCreateRequest.getHardwareid(), deviceInterfaceCreateRequest.getMethodname());
-            if (ObjectUtils.isEmpty(deviceInterfaceEntity)) {
-                DeviceInterfaceEntity deviceInterfaceEntityVO = DeviceInterfaceCreateRequest.buildDeviceInterfaceEntity(deviceInterfaceCreateRequest);
-                deviceInterfaceRepository.save(deviceInterfaceEntityVO);
-            } else {
-                return JsonResult.failure("The method name existing in the interface, please use the different name of the method");
-            }
-
-
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("save error");
+        DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(deviceInterfaceCreateRequest.getHardwareid(), deviceInterfaceCreateRequest.getMethodname());
+        if (ObjectUtils.isEmpty(deviceInterfaceEntity)) {
+            DeviceInterfaceEntity deviceInterfaceEntityVO = buildDeviceInterfaceEntity(deviceInterfaceCreateRequest);
+            return DeviceInterface.copy(deviceInterfaceRepository.save(deviceInterfaceEntityVO));
+        } else {
+            return null;
         }
-        return JsonResult.success("save success", null);
 
     }
 
     @Override
-    public IResult updateDeviceInterface(String hardwareId, String methodName, IDeviceInterfaceCreateRequest deviceInterfaceCreateRequest) {
+    public IDeviceInterface updateDeviceInterface(String hardwareId, String methodName, DeviceInterfaceCreateRequest deviceInterfaceCreateRequest) {
 
-        try {
-            DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName);
-            if (ObjectUtils.isEmpty((deviceInterfaceEntity))) {
-                return JsonResult.failure("Save failed, there is no this device or method");
-            } else {
-                deviceInterfaceEntity.setDefinition(new Gson().toJson(deviceInterfaceCreateRequest.getDefinition()));
-                deviceInterfaceEntity.setComments(deviceInterfaceCreateRequest.getComments());
-                deviceInterfaceEntity.setDeleted(deviceInterfaceCreateRequest.getDeleted());
-                deviceInterfaceEntity.setScript(deviceInterfaceCreateRequest.getScript());
-                deviceInterfaceRepository.save(deviceInterfaceEntity);
-            }
-
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("update error");
+        DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName);
+        if (ObjectUtils.isEmpty((deviceInterfaceEntity))) {
+            return null;
+        } else {
+            deviceInterfaceEntity.setDefinition(new Gson().toJson(deviceInterfaceCreateRequest.getDefinition()));
+            deviceInterfaceEntity.setComments(deviceInterfaceCreateRequest.getComments());
+            deviceInterfaceEntity.setDeleted(deviceInterfaceCreateRequest.getDeleted());
+            deviceInterfaceEntity.setScript(deviceInterfaceCreateRequest.getScript());
+            return DeviceInterface.copy(deviceInterfaceRepository.save(deviceInterfaceEntity));
         }
-        return JsonResult.success("update success", null);
     }
 
     @Override
-    public IResult deleteDeviceInterface(String hardwareId, String methodName) {
-        try {
-            DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName);
-            if (!ObjectUtils.isEmpty(deviceInterfaceEntity)) {
-                deviceInterfaceRepository.delete(deviceInterfaceEntity);
-            } else {
-                return JsonResult.failure("delete failed, there is no this device or method");
-            }
-
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("delete error");
+    public void deleteDeviceInterface(String hardwareId, String methodName) {
+        DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName);
+        if (!ObjectUtils.isEmpty(deviceInterfaceEntity)) {
+            deviceInterfaceRepository.delete(deviceInterfaceEntity);
         }
-        return JsonResult.success("delete success", null);
     }
 
     @Override
-    public Page<DeviceInterfaceEntity> listDeviceInterface(IDeviceInterfaceSearchCriteria criteria) {
+    public Page<IDeviceInterfaceEntity> listDeviceInterface(DeviceInterfaceSearchCriteria criteria) {
         Sort.Order idOrder = new Sort.Order(Sort.Direction.DESC, "id");
         Sort sort = new Sort(idOrder);
         PageRequest pageRequest = new PageRequest(criteria.getPageNumber() - 1, criteria.getPageSize(), sort);
@@ -111,20 +91,22 @@ public class DeviceInterfaceServiceImpl implements IDeviceInterfaceService {
         }
     }
 
-
-    /*
     @Override
-    public IResult updateDeviceInterface(IDeviceInterfaceCreateRequest deviceInterfaceCreateRequest) {
-
-        try {
-
-        } catch (MFSqlException e) {
-            LOGGER.error(e.getErrorMsg());
-            return JsonResult.failure("save error");
-        }
-        return JsonResult.success("save success", null);
+    public IDeviceInterface getDeviceInterfaceByHardwareIdAndMethodName(String hardwareId, String methodName) {
+        return DeviceInterface.copy(deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName)) ;
     }
-    */
+
+    public static DeviceInterfaceEntity buildDeviceInterfaceEntity(IDeviceInterfaceCreateRequest request) {
+        return new DeviceInterfaceEntity(
+                request.getHardwareid(),
+                request.getComments(),
+                new Date(),
+                request.getMethodname(),
+                new Gson().toJson(request.getDefinition()),
+                false,
+                request.getScript()
+        );
+    }
 
 
 }

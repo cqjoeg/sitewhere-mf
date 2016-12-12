@@ -1,10 +1,10 @@
 package com.sitewhere.measurefilter.mvc.controller;
 
-import com.sitewhere.measurefilter.mvc.service.IDeviceFieldService;
-import com.sitewhere.measurefilter.rest.model.device.request.DeviceFieldCreateRequest;
-import com.sitewhere.measurefilter.spi.IResult;
-import com.sitewhere.measurefilter.spi.SiteWhereException;
-import com.sitewhere.measurefilter.spi.user.SiteWhereRoles;
+import com.sitewhere.rest.model.device.field.request.DeviceFieldCreateRequest;
+import com.sitewhere.spi.SiteWhereException;
+import com.sitewhere.spi.device.field.IDeviceField;
+import com.sitewhere.spi.device.field.service.IDeviceFieldService;
+import com.sitewhere.spi.user.SiteWhereRoles;
 import com.wordnik.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 @CrossOrigin
 @RequestMapping(value = "/device/field")
 //@Api(value = "/device/field", description = "Operations related to SiteWhere devices.")
-public class DeviceFieldController {
+public class DeviceFieldController extends MFBaseController{
 
     /**
      * Static logger instance
@@ -54,9 +54,9 @@ public class DeviceFieldController {
     @ResponseBody
     @ApiOperation(value = "Create new DeviceField")
     @Secured({SiteWhereRoles.REST})
-    public IResult createDeviceField(@RequestBody DeviceFieldCreateRequest request, HttpServletRequest servletRequest)
+    public IDeviceField createDeviceField(@RequestBody DeviceFieldCreateRequest request, HttpServletRequest servletRequest)
             throws SiteWhereException {
-        IResult result = deviceFieldService.insertDeviceField(request);
+        IDeviceField result = deviceFieldService.insertDeviceField(request);
         return result;
     }
 
@@ -72,22 +72,22 @@ public class DeviceFieldController {
     @RequestMapping(value = "/{hardwareId}", method = RequestMethod.PUT)
     @ResponseBody
     @Secured({SiteWhereRoles.REST})
-    public IResult updateDeviceField(
+    public IDeviceField updateDeviceField(
             @PathVariable String hardwareId,
             @RequestBody DeviceFieldCreateRequest request, HttpServletRequest servletRequest)
             throws SiteWhereException {
-        IResult result = deviceFieldService.updateDeviceField(hardwareId, request);
+        IDeviceField result = deviceFieldService.updateDeviceField(hardwareId, request);
         return result;
     }
 
     @RequestMapping(value = "/{hardwareId}/{type}", method = RequestMethod.DELETE)
     @ResponseBody
     @Secured({SiteWhereRoles.REST})
-    public IResult deleteDeviceField(
+    public IDeviceField deleteDeviceField(
             @PathVariable String hardwareId, @PathVariable String type,
             HttpServletRequest servletRequest) {
-        IResult result = deviceFieldService.deleteDeviceField(hardwareId, type);
-        return result;
+        deviceFieldService.deleteDeviceField(hardwareId, type);
+        return null;
     }
 
 }

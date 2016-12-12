@@ -1,7 +1,6 @@
 package com.sitewhere.measurefilter;
 
 import com.google.gson.Gson;
-import com.sitewhere.measurefilter.mvc.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;

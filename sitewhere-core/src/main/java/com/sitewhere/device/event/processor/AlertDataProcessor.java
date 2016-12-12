@@ -1,16 +1,12 @@
 package com.sitewhere.device.event.processor;
 
-import com.google.gson.Gson;
 import com.sitewhere.SiteWhere;
-import com.sitewhere.measurefilter.SpringUtil;
-import com.sitewhere.measurefilter.api.IDeviceAlertDataAPI;
-import com.sitewhere.measurefilter.api.IDeviceFieldAPI;
-import com.sitewhere.measurefilter.mvc.domain.DeviceALertDataEntity;
-import com.sitewhere.measurefilter.mvc.domain.DeviceFieldEntity;
-import com.sitewhere.measurefilter.mvc.service.impl.DeviceAlertDataServiceImpl;
-import com.sitewhere.measurefilter.rest.model.device.DeviceAlertDefinition;
-import com.sitewhere.measurefilter.rest.model.device.DeviceAlertRangeDefinition;
+import com.sitewhere.SpringUtil;
 import com.sitewhere.rest.model.device.event.request.DeviceCommandResponseCreateRequest;
+import com.sitewhere.rest.model.device.field.DeviceAlertData;
+import com.sitewhere.rest.model.device.field.DeviceAlertDefinition;
+import com.sitewhere.rest.model.device.field.DeviceAlertRangeDefinition;
+import com.sitewhere.rest.model.device.field.DeviceField;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.device.IDevice;
@@ -19,6 +15,9 @@ import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.event.IDeviceCommandResponse;
 import com.sitewhere.spi.device.event.IDeviceEventManagement;
 import com.sitewhere.spi.device.event.request.IDeviceMeasurementsCreateRequest;
+import com.sitewhere.spi.device.field.IDeviceField;
+import com.sitewhere.spi.device.field.service.IDeviceAlertDataService;
+import com.sitewhere.spi.device.field.service.IDeviceFieldService;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import org.apache.log4j.Logger;
@@ -59,16 +58,16 @@ public class AlertDataProcessor extends InboundEventProcessor {
     public void onDeviceMeasurementsCreateRequest(String hardwareId, String originator,
                                                   IDeviceMeasurementsCreateRequest request) throws SiteWhereException, BeansException {
 
-        IDeviceFieldAPI deviceFieldAPI = (IDeviceFieldAPI) SpringUtil.getBean("DeviceFieldAPI");
-        DeviceFieldEntity deviceFieldEntity = deviceFieldAPI.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceAlertDefinition.ALERT);
-        if (deviceFieldEntity == null)
+
+        IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
+        IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.ALERT);
+        if (deviceField == null)
             return;
 
-        String jsonStr = deviceFieldEntity.getDefinition();
-        List<DeviceAlertRangeDefinition> list = new Gson().fromJson(jsonStr, DeviceAlertDefinition.class).getKeys();
+        List<DeviceAlertRangeDefinition> list = ((DeviceAlertDefinition) deviceField.getDefinition()).getKeys();
 
         Set<String> requestKeys = request.getMeasurements().keySet();//所有的 measurements 的key 值
-        List<DeviceALertDataEntity> deviceALertDataEntities = new ArrayList<DeviceALertDataEntity>();
+        List<DeviceAlertData> deviceALertDataEntities = new ArrayList<DeviceAlertData>();
 
         for (DeviceAlertRangeDefinition deviceAlertRangeDefinition : list) {
             if (requestKeys.contains(deviceAlertRangeDefinition.getKey())) {
@@ -79,7 +78,7 @@ public class AlertDataProcessor extends InboundEventProcessor {
                     Double to = alertRange.getTo();
                     if (from <= requestValue && requestValue <= to)
                         deviceALertDataEntities.add(
-                                DeviceAlertDataServiceImpl.buildDefaultDeviceAlertDataEntity(hardwareId, "", alertRange.getMessage(), new Date(), requestValue)
+                                new DeviceAlertData(hardwareId, "", alertRange.getMessage(), new Date(), requestValue)
                         );
                 }
 
@@ -87,7 +86,7 @@ public class AlertDataProcessor extends InboundEventProcessor {
 
         }
         if (deviceALertDataEntities.size() > 0) {
-            IDeviceAlertDataAPI deviceFieldAPI1 = (IDeviceAlertDataAPI) SpringUtil.getBean("DeviceAlertDataAPI");
+            IDeviceAlertDataService deviceFieldAPI1 = (IDeviceAlertDataService) SpringUtil.getBean(IDeviceAlertDataService.DEVICE_ALERT_DATA_SERVICE_IMPL);
             deviceFieldAPI1.batchInsert(deviceALertDataEntities);
         }
     }

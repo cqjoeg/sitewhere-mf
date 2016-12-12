@@ -1,7 +1,6 @@
 package com.sitewhere.measurefilter.mvc.dao;
 
 import com.sitewhere.measurefilter.mvc.domain.DeviceFieldEntity;
-import com.sitewhere.measurefilter.mvc.service.IBaseService;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 

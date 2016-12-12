@@ -1,10 +1,9 @@
 package com.sitewhere.measurefilter.mvc.dao;
 
 import com.sitewhere.measurefilter.mvc.domain.DeviceALertDataEntity;
-import com.sitewhere.measurefilter.rest.model.device.DeviceAlertData;
+import com.sitewhere.spi.device.field.domain.IDeviceALertDataEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -26,8 +25,7 @@ public interface DeviceAlertDataRepository extends PagingAndSortingRepository<De
      * @param pageable
      * @return
      */
-    @Query(value = "SELECT dad FROM DeviceALertDataEntity dad where dad.hardwareid = ?1")
-    Page<DeviceALertDataEntity> findByHardwareid(String hardwareid, Pageable pageable);
+    Page<IDeviceALertDataEntity> findByHardwareid(String hardwareid, Pageable pageable);
 
 
     /**
