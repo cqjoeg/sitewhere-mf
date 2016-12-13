@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author Joeg
  */
-public interface IDeviceInterfaceCreateRequest extends IMetadataProviderEntity {
+public interface IDeviceInterfaceCreateRequest {
 
     public String getHardwareid();
 

@@ -10,9 +10,11 @@ import java.util.List;
  *
  * @author Joeg
  */
-public interface IDeviceMethodDefinition extends IMetadataProviderEntity {
+public interface IDeviceMethodDefinition {
 
     public String getMethodName();
 
     public List<DeviceMethodField> getFieldList();
+
+    public String getEventType();
 }

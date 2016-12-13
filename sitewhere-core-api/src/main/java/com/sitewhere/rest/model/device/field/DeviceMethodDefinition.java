@@ -13,7 +13,7 @@ import java.util.List;
  * @author Joeg
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeviceMethodDefinition extends MetadataProviderEntity implements IDeviceMethodDefinition, Serializable {
+public class DeviceMethodDefinition implements IDeviceMethodDefinition, Serializable {
 
 
     /**
@@ -25,20 +25,30 @@ public class DeviceMethodDefinition extends MetadataProviderEntity implements ID
 
     private List<DeviceMethodField> fieldList;
 
+    private String eventType;
+
+
     public String getMethodName() {
         return methodName;
-    }
-
-    public void setMethodName(String methodName) {
-        this.methodName = methodName;
     }
 
     public List<DeviceMethodField> getFieldList() {
         return fieldList;
     }
 
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
     public void setFieldList(List<DeviceMethodField> fieldList) {
         this.fieldList = fieldList;
     }
 
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 }

@@ -16,7 +16,7 @@ import java.util.Date;
  */
 
 @JsonInclude(Include.NON_NULL)
-public class DeviceInterfaceCreateRequest extends MetadataProviderEntity implements IDeviceInterfaceCreateRequest, Serializable {
+public class DeviceInterfaceCreateRequest implements IDeviceInterfaceCreateRequest, Serializable {
 
     /**
      * Serialization version identifier

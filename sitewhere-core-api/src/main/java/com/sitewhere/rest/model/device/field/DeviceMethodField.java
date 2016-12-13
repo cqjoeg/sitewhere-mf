@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Joeg
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeviceMethodField extends MetadataProviderEntity implements IDeviceMethodField, Serializable {
+public class DeviceMethodField implements IDeviceMethodField, Serializable {
 
     /**
      * Serialization version identifier

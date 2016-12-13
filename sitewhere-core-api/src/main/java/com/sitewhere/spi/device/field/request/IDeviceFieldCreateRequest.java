@@ -6,7 +6,7 @@ import com.sitewhere.spi.common.IMetadataProviderEntity;
 /**
  * Created by CQ on 2016/11/20.
  */
-public interface IDeviceFieldCreateRequest extends IMetadataProviderEntity {
+public interface IDeviceFieldCreateRequest {
     /**
      * Get the unique hardware id of the device.
      *

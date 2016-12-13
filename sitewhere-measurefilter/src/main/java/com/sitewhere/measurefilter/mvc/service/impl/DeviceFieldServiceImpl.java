@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Date;
+
 /**
  * Created by CQ on 2016/11/20.
  */
@@ -85,7 +87,7 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
         return new DeviceFieldEntity(request.getHardwareId(),
                 request.getType(),
                 request.getComments(),
-                request.getCreatedDate(), false,
+                new Date(), false,
                 (new Gson()).toJson(request.getDefinition()),
                 request.getStarted()
         );

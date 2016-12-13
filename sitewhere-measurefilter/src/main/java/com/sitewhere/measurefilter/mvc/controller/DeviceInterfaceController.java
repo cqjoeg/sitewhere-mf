@@ -2,6 +2,7 @@ package com.sitewhere.measurefilter.mvc.controller;
 
 import com.sitewhere.SiteWhere;
 import com.sitewhere.rest.model.device.field.request.DeviceInterfaceCreateRequest;
+import com.sitewhere.rest.model.device.field.request.DeviceInterfaceTransferSearchRequest;
 import com.sitewhere.rest.model.search.DateRangeSearchCriteria;
 import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.rest.model.search.field.DeviceInterfaceSearchCriteria;
@@ -14,13 +15,15 @@ import com.sitewhere.spi.user.SiteWhereRoles;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Controller for deviceInterface
@@ -113,24 +116,56 @@ public class DeviceInterfaceController extends MFBaseController {
     }
 
 
-    @RequestMapping(value = "/{hardwareid}/{methodname}")
+    @RequestMapping(value = "/{hardwareid}/{methodname}", method = RequestMethod.POST)
     @ResponseBody
+    @Secured({SiteWhereRoles.REST})
     public ISearchResults transfer(@PathVariable String hardwareid, @PathVariable String methodname,
-                                   @RequestParam(required = false, defaultValue = "1") int page,
-                                   @RequestParam(required = false, defaultValue = "0") int pageSize,
-                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
-                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
-                                   HttpServletRequest servletRequest) throws SiteWhereException {
-        DateRangeSearchCriteria criteria =
-                new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
+                                   @RequestBody DeviceInterfaceTransferSearchRequest request,
+//                                   @RequestParam(required = false, defaultValue = "1") int page,
+//                                   @RequestParam(required = false, defaultValue = "0") int pageSize,
+//                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+//                                   @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
+                                   HttpServletRequest servletRequest) throws SiteWhereException, ScriptException {
+        //get assToken
+        IDeviceInterface deviceInterface = deviceInterfaceService.getDeviceInterfaceByHardwareIdAndMethodName(hardwareid, methodname);
+        String script = deviceInterface.getScript();
+        String eventType = deviceInterface.getDefinition().getEventType();
+
         String token = getAssignmentTokenByHardwareId(hardwareid, servletRequest);
-//        deviceInterfaceService
+        DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(request.getPageNumber(), request.getPageSize(), request.getStartDate(), request.getEndDate());
+        ISearchResults<?> sr = null;
+        switch (eventType) {
+            case "measurements":
+                sr = SiteWhere.getServer().getDeviceEventManagement(
+                        getTenant(servletRequest)).listDeviceMeasurements(token, criteria);
+                break;
+            case "alert":
+                sr = SiteWhere.getServer().getDeviceEventManagement(
+                        getTenant(servletRequest)).listDeviceAlerts(token, criteria);
 
-        SiteWhere.getServer().getDeviceEventManagement(
-                getTenant(servletRequest)).listDeviceMeasurements(token, criteria);
+                break;
+            case "location":
+                sr = SiteWhere.getServer().getDeviceEventManagement(
+                        getTenant(servletRequest)).listDeviceLocations(token, criteria);
+                break;
+        }
 
-        return null;
+        ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = manager.getEngineByName("groovy");
+        Iterator iter = request.getValues().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            engine.put((String) key, value);
+        }
+        engine.put("list", sr.getResults());
+        List resList = new ArrayList();
+        engine.put("resList", resList);
+        engine.eval(script);
 
+        return new SearchResults((List) engine.get("resList"));
     }
+
 
 }

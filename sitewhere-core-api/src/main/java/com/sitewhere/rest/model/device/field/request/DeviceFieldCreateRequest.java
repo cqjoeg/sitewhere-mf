@@ -2,8 +2,6 @@ package com.sitewhere.rest.model.device.field.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
-import com.sitewhere.spi.device.field.domain.IDeviceFieldEntity;
 import com.sitewhere.spi.device.field.request.IDeviceFieldCreateRequest;
 
 import java.io.Serializable;
@@ -14,7 +12,7 @@ import java.io.Serializable;
  * @author Joeg
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeviceFieldCreateRequest extends MetadataProviderEntity implements IDeviceFieldCreateRequest, Serializable {
+public class DeviceFieldCreateRequest implements IDeviceFieldCreateRequest, Serializable {
 
     /**
      * Serialization version identifier
