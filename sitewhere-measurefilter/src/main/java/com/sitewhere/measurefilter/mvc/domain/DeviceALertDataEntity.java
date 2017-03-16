@@ -4,7 +4,8 @@ import com.sitewhere.spi.device.field.domain.IDeviceALertDataEntity;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
+
 
 /**
  * Created by CQ on 2016/11/19.
@@ -27,13 +28,18 @@ public class DeviceALertDataEntity implements IDeviceALertDataEntity{
     @Column(name = "comments", length = 50)
     private String comments;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "createddate", nullable = false, updatable = false)
     @CreationTimestamp
-    private Date createddate;
+    @Column(name = "createddate", nullable = false, updatable = false)
+    private Timestamp createddate;
 
     @Column(name = " value", nullable = false)
     private Double value;
+
+    @Column(name = "range", length = 50)
+    private String range;
+
+    @Column(name = "assignmenttoken", length = 50)
+    private String assignmenttoken;
 
     /**
      * Constructor
@@ -50,12 +56,22 @@ public class DeviceALertDataEntity implements IDeviceALertDataEntity{
      * @param createddate
      * @param value
      */
-    public DeviceALertDataEntity(String hardwareid, String type, String comments, Date createddate, Double value) {
+//    public DeviceALertDataEntity(String hardwareid, String type, String comments, Date createddate, Double value) {
+//        this.hardwareid = hardwareid;
+//        this.type = type;
+//        this.comments = comments;
+//        this.createddate = createddate;
+//        this.value = value;
+//    }
+
+    public DeviceALertDataEntity(String hardwareid, String type, String comments, Timestamp createddate, Double value, String range, String assignmenttoken) {
         this.hardwareid = hardwareid;
         this.type = type;
         this.comments = comments;
         this.createddate = createddate;
         this.value = value;
+        this.range = range;
+        this.assignmenttoken = assignmenttoken;
     }
 
     //getter setter
@@ -93,11 +109,11 @@ public class DeviceALertDataEntity implements IDeviceALertDataEntity{
         this.comments = comments;
     }
 
-    public Date getCreateddate() {
+    public Timestamp getCreateddate() {
         return createddate;
     }
 
-    public void setCreateddate(Date createddate) {
+    public void setCreateddate(Timestamp createddate) {
         this.createddate = createddate;
     }
 
@@ -109,15 +125,34 @@ public class DeviceALertDataEntity implements IDeviceALertDataEntity{
         this.value = value;
     }
 
+    public String getRange() {
+        return range;
+    }
+
+    public void setRange(String range) {
+        this.range = range;
+    }
+
+    public String getAssignmenttoken() {
+        return assignmenttoken;
+    }
+
+    public void setAssignmenttoken(String assignmenttoken) {
+        this.assignmenttoken = assignmenttoken;
+    }
+
+
     @Override
     public String toString() {
-        return "DeviceALertData{" +
+        return "DeviceALertDataEntity{" +
                 "id=" + id +
                 ", hardwareid='" + hardwareid + '\'' +
                 ", type='" + type + '\'' +
                 ", comments='" + comments + '\'' +
                 ", createddate=" + createddate +
                 ", value=" + value +
+                ", range='" + range + '\'' +
+                ", assignmenttoken='" + assignmenttoken + '\'' +
                 '}';
     }
 }

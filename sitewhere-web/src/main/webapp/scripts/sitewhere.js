@@ -185,6 +185,15 @@ function formattedDate(date) {
 	return "N/A";
 }
 
+function formattedTimestamp2Date(timestamp){
+	if (timestamp){
+		var datetime = new Date();
+		datetime.setTime(timestamp);
+		return datetime;
+	}
+	return null;
+}
+
 /** Format date as ISO 8601 */
 function asISO8601(date) {
 	var utc = date.getTime() + (date.getTimezoneOffset() * 60000);
@@ -332,6 +341,7 @@ function swMetadataDatasource() {
 		}
 	});
 }
+
 
 /** Options for metadata grid display */
 function swMetadataGridOptions(datasource, title) {

@@ -3,18 +3,15 @@ package com.sitewhere.measurefilter.mvc.service.impl;
 import com.google.gson.Gson;
 import com.sitewhere.measurefilter.mvc.dao.DeviceInterfaceRepository;
 import com.sitewhere.measurefilter.mvc.domain.DeviceInterfaceEntity;
-import com.sitewhere.rest.model.device.field.DeviceField;
 import com.sitewhere.rest.model.device.field.DeviceInterface;
 import com.sitewhere.rest.model.device.field.request.DeviceInterfaceCreateRequest;
 import com.sitewhere.rest.model.search.field.DeviceInterfaceSearchCriteria;
-import com.sitewhere.spi.device.field.IDeviceField;
 import com.sitewhere.spi.device.field.IDeviceInterface;
 import com.sitewhere.spi.device.field.domain.IDeviceInterfaceEntity;
 import com.sitewhere.spi.device.field.request.IDeviceInterfaceCreateRequest;
 import com.sitewhere.spi.device.field.service.IDeviceInterfaceService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,6 +19,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * DeviceInterfaceserviceimpl
@@ -79,15 +77,15 @@ public class DeviceInterfaceServiceImpl implements IDeviceInterfaceService {
     }
 
     @Override
-    public Page<IDeviceInterfaceEntity> listDeviceInterface(DeviceInterfaceSearchCriteria criteria) {
+    public List<IDeviceInterfaceEntity> listDeviceInterface(DeviceInterfaceSearchCriteria criteria) {
         Sort.Order idOrder = new Sort.Order(Sort.Direction.DESC, "id");
         Sort sort = new Sort(idOrder);
         PageRequest pageRequest = new PageRequest(criteria.getPageNumber() - 1, criteria.getPageSize(), sort);
 
         if (StringUtils.isEmpty(criteria.getMethodName())) {
-            return deviceInterfaceRepository.findByHardwareid(criteria.getHardwareid(), pageRequest);
+            return deviceInterfaceRepository.findByHardwareid(criteria.getHardwareid(), pageRequest).getContent();
         } else {
-            return deviceInterfaceRepository.findByHardwareidAndMethodname(criteria.getHardwareid(), criteria.getMethodName(), pageRequest);
+            return deviceInterfaceRepository.findByHardwareidAndMethodname(criteria.getHardwareid(), criteria.getMethodName(), pageRequest).getContent();
         }
     }
 

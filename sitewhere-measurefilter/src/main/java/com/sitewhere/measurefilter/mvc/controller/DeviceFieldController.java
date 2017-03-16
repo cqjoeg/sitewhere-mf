@@ -5,7 +5,6 @@ import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.field.IDeviceField;
 import com.sitewhere.spi.device.field.service.IDeviceFieldService;
 import com.sitewhere.spi.user.SiteWhereRoles;
-import com.wordnik.swagger.annotations.ApiOperation;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -44,6 +43,15 @@ public class DeviceFieldController extends MFBaseController{
      * 5.
      * */
 
+    @RequestMapping(value = "/{hardwareId}", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured({SiteWhereRoles.REST})
+    public IDeviceField getDeviceFieldByHardwareId(
+            @PathVariable String hardwareId, HttpServletRequest servletRequest)throws SiteWhereException {
+        IDeviceField result = deviceFieldService.getDeviceFieldByHardwareId(hardwareId);
+        return result;
+    }
+
     /**
      * Create a device.
      *
@@ -52,7 +60,6 @@ public class DeviceFieldController extends MFBaseController{
      */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    @ApiOperation(value = "Create new DeviceField")
     @Secured({SiteWhereRoles.REST})
     public IDeviceField createDeviceField(@RequestBody DeviceFieldCreateRequest request, HttpServletRequest servletRequest)
             throws SiteWhereException {

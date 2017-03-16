@@ -1,6 +1,5 @@
 
 apply plugin: 'war'
-
 apply plugin: 'spring-boot'
 springBoot {
     mainClass = 'com.sitewhere.web.SiteWhereWebApplication'
@@ -33,7 +32,9 @@ dependencies {
     compile project(':sitewhere-measurefilter')
 
 	compile ('org.springframework.boot:spring-boot-starter-web')
-    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    //
+//    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+//    compile("org.springframework.boot:spring-boot-devtools")
     compile ('org.springframework.boot:spring-boot-starter-log4j')
  	compile ('org.apache.tomcat.embed:tomcat-embed-jasper')
 
@@ -56,9 +57,8 @@ dependencies {
 	compile group: 'javax.servlet', name: 'jstl'
 
     //Joeg add : user to connection to postgresql and do orm by Jpa.
-    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1208'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.0.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-rest', version: '1.4.0.RELEASE'
+//    compile group: 'org.postgresql', name: 'postgresql', version: '9.4.1208'
+//    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '1.4.0.RELEASE'
 }
 
 task manifestJar(dependsOn:'classes',type: Jar) {

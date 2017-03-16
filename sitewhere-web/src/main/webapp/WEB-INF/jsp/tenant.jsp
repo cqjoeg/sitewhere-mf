@@ -45,7 +45,6 @@
 			<form id="view-tenant" method="get">
 				<input id="view-tenant-redirect" type="hidden" name="redirect" value="${redirect}" />
 			</form>
-
 			<%@ include file="tenants/tenantChooserEntry.inc"%>
 
 

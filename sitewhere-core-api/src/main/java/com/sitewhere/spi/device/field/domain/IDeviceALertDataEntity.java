@@ -1,6 +1,6 @@
 package com.sitewhere.spi.device.field.domain;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * interface of Device Alert Data Entity
@@ -20,7 +20,7 @@ public interface IDeviceALertDataEntity {
     public String getComments();
 
 
-    public Date getCreateddate();
+    public Timestamp getCreateddate();
 
 
     public Double getValue();

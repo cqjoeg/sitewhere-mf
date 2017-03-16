@@ -21,6 +21,7 @@ include ':sitewhere-spark'
 include ':sitewhere-spring'
 include ':sitewhere-twilio'
 include ':sitewhere-web'
+include ':sitewhere-web-mf'
 include ':sitewhere-wso2'
 include 'sitewhere-measurefilter'
 
@@ -48,5 +49,5 @@ project(':sitewhere-twilio').projectDir = "$rootDir/sitewhere-twilio" as File
 project(':sitewhere-web').projectDir = "$rootDir/sitewhere-web" as File
 project(':sitewhere-wso2').projectDir = "$rootDir/sitewhere-wso2" as File
 project(':sitewhere-measurefilter').projectDir = "$rootDir/sitewhere-measurefilter" as File
-
+project(':sitewhere-web-mf').projectDir = "$rootDir/sitewhere-web-mf" as File
 

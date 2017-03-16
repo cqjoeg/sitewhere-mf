@@ -2,7 +2,6 @@ package com.sitewhere.spi.device.field.request;
 
 
 import com.sitewhere.rest.model.device.field.DeviceMethodDefinition;
-import com.sitewhere.spi.common.IMetadataProviderEntity;
 
 import java.util.Date;
 

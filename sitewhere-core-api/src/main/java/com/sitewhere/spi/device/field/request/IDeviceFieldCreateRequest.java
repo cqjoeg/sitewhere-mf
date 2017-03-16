@@ -1,7 +1,6 @@
 package com.sitewhere.spi.device.field.request;
 
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
 
 /**
  * Created by CQ on 2016/11/20.

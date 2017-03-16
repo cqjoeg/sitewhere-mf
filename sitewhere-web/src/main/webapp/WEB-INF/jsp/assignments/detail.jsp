@@ -35,12 +35,14 @@ table#invocations tr td {
 <!-- Tab panel -->
 <div id="tabs">
 	<ul>
-		<li class="k-state-active">&nbsp;<font
-			data-i18n="public.Locations"></font></li>
+		<li class="k-state-active">&nbsp;<font data-i18n="public.Locations"></font></li>
 		<li>&nbsp;<font data-i18n="public.Measurements"></font></li>
 		<li>&nbsp;<font data-i18n="public.Alerts"></font></li>
 		<li>&nbsp;<font data-i18n="public.CommandInvocations"></font></li>
+		<li>&nbsp;<font data-i18n="public.MFAlerts"></font></li>
+
 	</ul>
+	<%-- location--%>
 	<div>
 		<div class="k-header sw-button-bar">
 			<div class="sw-button-bar-title" data-i18n="public.DeviceLocations"></div>
@@ -77,6 +79,7 @@ table#invocations tr td {
 		</table>
 		<div id="locations-pager" class="k-pager-wrap event-pager"></div>
 	</div>
+	<%-- measurements--%>
 	<div>
 		<div class="k-header sw-button-bar">
 			<div class="sw-button-bar-title"
@@ -111,6 +114,7 @@ table#invocations tr td {
 		</table>
 		<div id="measurements-pager" class="k-pager-wrap event-pager"></div>
 	</div>
+	<%--device alerts--%>
 	<div>
 		<div class="k-header sw-button-bar">
 			<div class="sw-button-bar-title" data-i18n="public.DeviceAlerts"></div>
@@ -147,6 +151,7 @@ table#invocations tr td {
 		</table>
 		<div id="alerts-pager" class="k-pager-wrap event-pager"></div>
 	</div>
+	<%-- Device Command Invocations--%>
 	<div>
 		<div class="k-header sw-button-bar">
 			<div class="sw-button-bar-title"
@@ -190,6 +195,44 @@ table#invocations tr td {
 		</table>
 		<div id="invocations-pager" class="k-pager-wrap event-pager"></div>
 	</div>
+
+	<%-- my alerts data --%>
+	<div>
+		<div class="k-header sw-button-bar">
+			<div class="sw-button-bar-title" data-i18n="public.DeviceAlerts"></div>
+			<div>
+				<a id="btn-filter-mf-alerts" class="btn" href="javascript:void(0)">
+					<i class="fa fa-search sw-button-icon"></i> <span data-i18n="public.FilterResults">Filter Results</span></a>
+				<a id="btn-refresh-mf-alerts" class="btn" href="javascript:void(0)">
+					<i class="fa fa-refresh sw-button-icon"></i> <span data-i18n="public.Refresh">Refresh</span>
+			</a>
+			</div>
+		</div>
+		<table id="mf-alerts">
+			<colgroup>
+				<col style="width: 10%;" />
+				<col style="width: 20%;" />
+				<col style="width: 10%;" />
+				<col style="width: 20%;" />
+			</colgroup>
+			<thead>
+			<tr>
+				<th data-i18n="public.Type"></th>
+				<th data-i18n="public.Range"></th>
+				<th data-i18n="public.Value"></th>
+				<th data-i18n="public.EventDate"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td colspan="5"></td>
+			</tr>
+			</tbody>
+		</table>
+		<div id="mf-alerts-pager" class="k-pager-wrap event-pager"></div>
+	</div>
+
+
 </div>
 
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
@@ -203,6 +246,7 @@ table#invocations tr td {
 <%@ include file="../includes/templateLocationEntry.inc"%>
 <%@ include file="../includes/templateMeasurementsEntry.inc"%>
 <%@ include file="../includes/templateAlertEntry.inc"%>
+<%@ include file="../includes/templateDeviceFieldAlertsEntry.inc"%>
 <%@ include file="../includes/commonFunctions.inc"%>
 
 <script>
@@ -226,6 +270,9 @@ table#invocations tr td {
 
 	/** Datasource for alerts */
 	var alertsDS;
+
+	/** Datasource for field alerts**/
+	var fieldAlertsDS;
 
 	/** Reference to tab panel */
 	var tabs;
@@ -279,11 +326,9 @@ table#invocations tr td {
 		ivOpen(id);
 	}
 
-	$(document)
-			.ready(
-					function() {
+	$(document).ready(function() {
 
-						/** Create AJAX datasource for locations list */
+/** Create AJAX datasource for locations list */
 						locationsDS = new kendo.data.DataSource(
 								{
 									transport : {
@@ -331,7 +376,7 @@ table#invocations tr td {
 						});
 						$('#btn-filter-locations').attr('disabled', true);
 
-						/** Create AJAX datasource for measurements list */
+/** Create AJAX datasource for measurements list */
 						measurementsDS = new kendo.data.DataSource(
 								{
 									transport : {
@@ -379,7 +424,8 @@ table#invocations tr td {
 						});
 						$('#btn-filter-measurements').attr('disabled', true);
 
-						/** Create AJAX datasource for alerts list */
+
+/** Create AJAX datasource for alerts list */
 						alertsDS = new kendo.data.DataSource(
 								{
 									transport : {
@@ -427,7 +473,7 @@ table#invocations tr td {
 						});
 						$('#btn-filter-alerts').attr('disabled', true);
 
-						/** Create AJAX datasource for invocations list */
+/** Create AJAX datasource for invocations list */
 						invocationsDS = new kendo.data.DataSource(
 								{
 									transport : {
@@ -481,6 +527,53 @@ table#invocations tr td {
 							dataSource : invocationsDS
 						});
 
+/** crate Ajax datasoure for field device alerts**/
+		fieldAlertsDS = new kendo.data.DataSource(
+				{
+					transport : {
+						read : {
+							url : "${pageContext.request.contextPath}/api/device/alert/data/" + token + "/alerts" ,
+							beforeSend : function(req) {
+								req.setRequestHeader(
+										'Authorization',
+										"Basic ${basicAuth}");
+								req
+										.setRequestHeader(
+												'X-SiteWhere-Tenant',
+												"${tenant.authenticationToken}");
+							},
+							dataType : "json",
+						}
+					},
+					schema : {
+						data : "results",
+						total : "numResults",
+						parse : parseEventResults,
+					},
+					serverPaging : true,
+					serverSorting : true,
+					pageSize : pageSize,
+				}
+		)
+
+		/** Create the mf-alerts list */
+		$("#mf-alerts").kendoGrid(
+				{
+					dataSource : fieldAlertsDS,
+					rowTemplate : kendo.template($(
+							"#tpl-field-alerts-entry").html()),
+					scrollable : true,
+					height : gridHeight,
+				});
+		$("#mf-alerts-pager").kendoPager({
+			dataSource : fieldAlertsDS
+		});
+
+		$("#btn-refresh-mf-alerts").click(function() {
+			fieldAlertsDS.read();
+		});
+		$('#btn-filter-mf-alerts').attr('disabled', true);
+
 						$("#btn-edit-assignment").click(function() {
 							auOpen(token, onAssignmentEditSuccess);
 						});
@@ -492,7 +585,11 @@ table#invocations tr td {
 						}).data("kendoTabStrip");
 
 						loadAssignment();
+
+
 					});
+
+
 
 	/** Force grid refresh on first tab activate (KendoUI bug) */
 	function onActivate(e) {

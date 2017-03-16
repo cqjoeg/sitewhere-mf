@@ -5,6 +5,7 @@ import com.sitewhere.SpringUtil;
 import com.sitewhere.rest.model.device.event.request.DeviceCommandResponseCreateRequest;
 import com.sitewhere.rest.model.device.field.DeviceField;
 import com.sitewhere.rest.model.device.field.DeviceFieldDefinition;
+import com.sitewhere.rest.model.device.field.DeviceKeyDefinition;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.device.IDevice;
@@ -20,9 +21,7 @@ import com.sitewhere.spi.error.ErrorLevel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by CQ on 2016/12/6.
@@ -55,21 +54,32 @@ public class MeasureFilterProcessor extends InboundEventProcessor {
      */
     @Override
     public void onDeviceMeasurementsCreateRequest(String hardwareId, String originator,
-                                                  IDeviceMeasurementsCreateRequest request) throws SiteWhereException, BeansException {
-        IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
-        IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.MEASUREMENTS);
-        List<String> list = ((DeviceFieldDefinition) deviceField.getDefinition()).getKey();
-        //过滤
-        Iterator iterator = request.getMeasurements().entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            Object key = entry.getKey();
-            if (!list.contains(key)) {//不包含去除
-                iterator.remove();
+                                                  IDeviceMeasurementsCreateRequest request)
+            throws SiteWhereException, BeansException {
+        IDevice device = getDeviceManagement().getDeviceByHardwareId(hardwareId);
+        if (device != null) {
+            IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
+            IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.MEASUREMENTS);
+            List<DeviceKeyDefinition> list = ((DeviceFieldDefinition) deviceField.getDefinition()).getKeys();
+
+            //得到 key值 list
+            List<String> result = new ArrayList<String>();
+            Iterator iter = list.iterator();
+            while (iter.hasNext()) {
+                DeviceKeyDefinition tmp = (DeviceKeyDefinition) iter.next();
+                result.add(tmp.getKey());
+            }
+
+            //过滤
+            Iterator iterator = request.getMeasurements().entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                Object key = entry.getKey();
+                if (!result.contains(key)) {//不包含去除
+                    iterator.remove();
+                }
             }
         }
-
-
     }
 
 

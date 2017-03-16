@@ -10,7 +10,9 @@
 				<li class="k-state-active" data-i18n="includes.DeviceDetails"></li>
 				<li data-i18n="public.Specification"></li>
 				<li data-i18n="public.Metadata"></li>
+				<li data-i18n="public.MF"></li>
 			</ul>
+<!--设备详情-->
 			<div>
 				<form id="dc-general-form" class="form-horizontal" style="padding-top: 20px;">
 					<div class="control-group">
@@ -35,6 +37,7 @@
 					</div>
 				</form>
 			</div>
+<!--规格-->
 			<div>
 				<form id="dc-specification-form" class="form-horizontal form-search" style="padding-top: 20px;">
 					<div class="control-group">
@@ -47,6 +50,7 @@
 					</div>
 				</form>
 			</div>
+<!--元数据-->
 			<div>
 				<div id="dc-metadata">
 					<jsp:include page="../includes/metadata.jsp" flush="true">
@@ -54,6 +58,15 @@
 					</jsp:include>
 				</div>
 			</div>
+<!--额外的入站处理-->
+			<div>
+				<dvi>
+					<jsp:include page="../includes/mfdata.jsp" flush="true">
+						<jsp:param name="mfid" value="mf" />
+					</jsp:include>
+				</dvi>
+			</div>
+
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -158,12 +171,39 @@
 				if (dcSubmitCallback != null) {
 					dcSubmitCallback();
 				}
+
+
+				var data = {
+					"hardwareId": $('#dc-hardware-id').val(),
+					"type": "measurements",
+					"comments": "",
+					"definition" : mf_MFData,
+					"started": true
+				};
+
+				/** 如果有创建 key 那么调用 下面的 rest去创建 **/
+				if (!isNull(mf_MFData.keys)) {
+					$.postAuthJSON(
+						"${pageContext.request.contextPath}/api/device/field",
+						data,
+						"${basicAuth}",
+						"${tenant.authenticationToken}",
+						null, onCreateFiedlFail);
+
+				}
+
 			}
 
 			/** Handle failed call to create device */
 			function onCreateFail(jqXHR, textStatus, errorThrown) {
 				handleError(jqXHR, i18next("includes.deviceCreateDialog.UTCD"));
 			}
+
+			/** Handle failed call to create device */
+			function onCreateFiedlFail(jqXHR, textStatus, errorThrown) {
+				handleError(jqXHR, "创建Field失败.");
+			}
+
 		});
 
 	/** Validate everything */

@@ -8,7 +8,6 @@ import com.sitewhere.spi.search.ISearchResults;
 import com.sitewhere.spi.user.SiteWhereRoles;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Controller for DeviceAlertData
@@ -26,7 +26,7 @@ import java.util.Date;
 @Controller
 @CrossOrigin
 @RequestMapping("/device/alert/data")
-public class DeviceAlertDataController extends MFBaseController{
+public class DeviceAlertDataController extends MFBaseController {
 
     /**
      * Static logger instance
@@ -38,7 +38,8 @@ public class DeviceAlertDataController extends MFBaseController{
 
     /**
      * 2. listDeviceAlertDataByHardWareId
-     * 3. listDeviceAlertDataByCriteria
+     * 3. listDeviceAlertDataByCriteria xxxx
+     * 4. listDeviceAlertDatasByAssigmentToken
      */
 
     /**
@@ -63,8 +64,33 @@ public class DeviceAlertDataController extends MFBaseController{
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
             HttpServletRequest servletRequest) {
         DeviceAlertDataSearchCriteria criteria = new DeviceAlertDataSearchCriteria(page, pageSize, startDate, endDate, hardwareid);
-        Page<IDeviceALertDataEntity> pageList = deviceAlertDataService.listDeviceAlertDatas(criteria);
-        return new SearchResults<IDeviceALertDataEntity>(pageList.getContent(), pageList.getNumber());
+        List<IDeviceALertDataEntity> pageList = deviceAlertDataService.listDeviceAlertDatasByCriteria(criteria);
+        return new SearchResults<IDeviceALertDataEntity>(pageList, pageList.size());
+    }
+
+    /**
+     * list device alertData by hardwareid and assignmentToken
+     * @param assigmentToken
+     * @param page
+     * @param pageSize
+     * @param startDate
+     * @param endDate
+     * @param servletRequest
+     * @return
+     */
+    @RequestMapping(value = "/{assigmentToken}/alerts", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured({SiteWhereRoles.REST})
+    public ISearchResults<IDeviceALertDataEntity>listDeviceAlertDatasByAssigmentToken(
+            @PathVariable String assigmentToken,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "100") int pageSize,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
+            HttpServletRequest servletRequest ){
+        DeviceAlertDataSearchCriteria criteria = new DeviceAlertDataSearchCriteria(page, pageSize, startDate, endDate, null, assigmentToken);
+        List<IDeviceALertDataEntity> pageList = deviceAlertDataService.listDeviceAlertDatasByCriteria(criteria);
+        return new SearchResults<IDeviceALertDataEntity>(pageList, pageList.size());
     }
 
 

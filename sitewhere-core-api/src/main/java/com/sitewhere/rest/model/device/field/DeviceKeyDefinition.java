@@ -11,7 +11,7 @@ import java.util.List;
  * @author Joeg
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DeviceAlertRangeDefinition implements Serializable {
+public class DeviceKeyDefinition implements Serializable {
 
     /**
      * Serialization version identifier
@@ -20,8 +20,9 @@ public class DeviceAlertRangeDefinition implements Serializable {
 
     private String key;
 
-    private List<AlertRange> ranges;
+    private List<AlertRange> alertRanges;
 
+    //extend 可在此处扩展其他的
 
     public String getKey() {
         return key;
@@ -31,14 +32,13 @@ public class DeviceAlertRangeDefinition implements Serializable {
         this.key = key;
     }
 
-    public List<AlertRange> getRanges() {
-        return ranges;
+    public List<AlertRange> getAlertRanges() {
+        return alertRanges;
     }
 
-    public void setRanges(List<AlertRange> ranges) {
-        this.ranges = ranges;
+    public void setAlertRanges(List<AlertRange> alertRanges) {
+        this.alertRanges = alertRanges;
     }
-
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public class AlertRange implements Serializable {
@@ -75,6 +75,8 @@ public class DeviceAlertRangeDefinition implements Serializable {
             this.message = message;
         }
     }
+
+
 
 }
 

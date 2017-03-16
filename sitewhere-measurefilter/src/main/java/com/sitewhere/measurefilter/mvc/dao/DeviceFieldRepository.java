@@ -20,4 +20,8 @@ public interface DeviceFieldRepository extends PagingAndSortingRepository<Device
      */
     public DeviceFieldEntity findByHardwareidAndType(String hardwareid, String type);
 
+
+    public DeviceFieldEntity findByHardwareid(String hardwareid);
+
+
 }

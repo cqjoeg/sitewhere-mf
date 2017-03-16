@@ -1,78 +1,78 @@
 <style>
-.sw-device-list-entry {
-	clear: both;
-	height: 70px;
-	border: 1px solid #dcdcdc;
-	padding: 10px;
-	margin-bottom: 15px;
-	font-size: 10pt;
-	text-align: left;
-	display: block;
-}
+    .sw-device-list-entry {
+        clear: both;
+        height: 70px;
+        border: 1px solid #dcdcdc;
+        padding: 10px;
+        margin-bottom: 15px;
+        font-size: 10pt;
+        text-align: left;
+        display: block;
+    }
 
-.sw-device-list-entry-heading {
-	font-size: 12pt;
-	font-weight: bold;
-	line-height: 1;
-}
+    .sw-device-list-entry-heading {
+        font-size: 12pt;
+        font-weight: bold;
+        line-height: 1;
+    }
 
-.sw-device-list-entry-label {
-	font-size: 10pt;
-	font-weight: bold;
-	display: inline-block;
-}
+    .sw-device-list-entry-label {
+        font-size: 10pt;
+        font-weight: bold;
+        display: inline-block;
+    }
 
-.sw-device-list-entry-logowrapper {
-	float: left;
-	margin-right: 15px;	
-	width: 70px;
-	height: 70px;
-	position: relative;
-}
+    .sw-device-list-entry-logowrapper {
+        float: left;
+        margin-right: 15px;
+        width: 70px;
+        height: 70px;
+        position: relative;
+    }
 
-.sw-device-list-entry-logo-tag {
-	position: absolute;
-	top: -2px;
-	left: -4px;
-}
+    .sw-device-list-entry-logo-tag {
+        position: absolute;
+        top: -2px;
+        left: -4px;
+    }
 
-.sw-device-list-entry-logo {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-    max-width: 70px;
-    max-height: 70px;
-    border: 1px solid rgb(221, 221, 221);
-}
+    .sw-device-list-entry-logo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 70px;
+        max-height: 70px;
+        border: 1px solid rgb(221, 221, 221);
+    }
 
-.sw-device-list-entry-assignment {
-	float: right;
-	width: 320px;
-	height: 100%;
-	padding-left: 10px;
-	margin-left: 10px;
-	border-left: solid 1px #e0e0e0;
-}
+    .sw-device-list-entry-assignment {
+        float: right;
+        width: 320px;
+        height: 100%;
+        padding-left: 10px;
+        margin-left: 10px;
+        border-left: solid 1px #e0e0e0;
+    }
 
-.sw-device-list-entry-no-assignment {
-	float: right;
-	width: 320px;
-	height: 100%;
-	padding-left: 10px;
-	margin-left: 10px;
-	border-left: solid 1px #e0e0e0;
-	text-align: center;
-}
+    .sw-device-list-entry-no-assignment {
+        float: right;
+        width: 320px;
+        height: 100%;
+        padding-left: 10px;
+        margin-left: 10px;
+        border-left: solid 1px #e0e0e0;
+        text-align: center;
+    }
 
-.sw-device-list-entry-actions {
-	float: right;
-	width: 260px;
-	height: 100%;
-	padding-left: 10px;
-	margin-left: 10px;
-	border-left: solid 1px #e0e0e0;
-	position: relative;
-}
+    .sw-device-list-entry-actions {
+        float: right;
+        width: 260px;
+        height: 100%;
+        padding-left: 10px;
+        margin-left: 10px;
+        border-left: solid 1px #e0e0e0;
+        position: relative;
+    }
 </style>
 
 <!-- Device list item template -->
@@ -85,6 +85,7 @@
 		<div class="sw-device-list-entry-actions">
 			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">#= i18next("public.Created") #:</span> #: formattedDate(data.createdDate) #</p>
 			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">#= i18next("public.Updated") #:</span> #: formattedDate(data.updatedDate) #</p>
+
 # if (data.inDetailView == null) { #
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small sw-action-glyph sw-primary-glyph" title="#= i18next("public.EditDevice") #" style="color: \\#009;" 
@@ -175,4 +176,5 @@
 			<p class="ellipsis"><span class="sw-device-list-entry-label" style="min-width: 35px;">#= i18next("includes.i18next.Spec") #:</span><span title="#:specification.name#">#:specification.name#</span></p>
 		</div>
 	</div>
+
 </script>

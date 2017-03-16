@@ -21,7 +21,9 @@ public class DeviceFieldDefinition implements Serializable {
 
     private String type;
 
-    private List<String> key;
+
+    private List<DeviceKeyDefinition> keys;
+
 
     public String getType() {
         return type;
@@ -31,12 +33,12 @@ public class DeviceFieldDefinition implements Serializable {
         this.type = type;
     }
 
-    public List<String> getKey() {
-        return key;
+    public List<DeviceKeyDefinition> getKeys() {
+        return keys;
     }
 
-    public void setKey(List<String> key) {
-        this.key = key;
+    public void setKeys(List<DeviceKeyDefinition> keys) {
+        this.keys = keys;
     }
 }
 

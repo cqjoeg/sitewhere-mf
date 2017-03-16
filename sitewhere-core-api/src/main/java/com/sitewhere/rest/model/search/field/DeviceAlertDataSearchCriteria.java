@@ -16,6 +16,8 @@ public class DeviceAlertDataSearchCriteria extends DateRangeSearchCriteria imple
     /** hardwareid*/
     private String hardwareid;
 
+    private String assignmentToken;
+
     public DeviceAlertDataSearchCriteria(int pageNumber, int pageSize, Date startDate, Date endDate) {
         super(pageNumber, pageSize, startDate, endDate);
     }
@@ -25,6 +27,12 @@ public class DeviceAlertDataSearchCriteria extends DateRangeSearchCriteria imple
         this.hardwareid = hardwareid;
     }
 
+    public DeviceAlertDataSearchCriteria(int pageNumber, int pageSize, Date startDate, Date endDate, String hardwareid, String assignmentToken) {
+        super(pageNumber, pageSize, startDate, endDate);
+        this.hardwareid = hardwareid;
+        this.assignmentToken = assignmentToken;
+    }
+
     @Override
     public String getHardwareid() {
         return hardwareid;
@@ -32,5 +40,14 @@ public class DeviceAlertDataSearchCriteria extends DateRangeSearchCriteria imple
 
     public void setHardwareid(String hardwareid) {
         this.hardwareid = hardwareid;
+    }
+
+    @Override
+    public String getAssignmentToken() {
+        return assignmentToken;
+    }
+
+    public void setAssignmentToken(String assignmentToken) {
+        this.assignmentToken = assignmentToken;
     }
 }

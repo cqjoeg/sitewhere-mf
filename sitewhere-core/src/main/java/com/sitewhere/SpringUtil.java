@@ -22,7 +22,8 @@ public class SpringUtil implements ApplicationContextAware {
         System.out.println("---------------------------------------------------------------------");
         System.out.println("---------------------------------------------------------------------");
         System.out.println("---------------simple.plugin.spring.SpringUtil------------------------------------------------------");
-        System.out.println("========ApplicationContext配置成功,在普通类可以通过调用SpringUtils.getAppContext()获取applicationContext对象,applicationContext=" + SpringUtil.applicationContext + "========");
+        System.out.println("========ApplicationContext confiration success," +
+                "you can use SpringUtils.getAppContext() in general class get obj applicationContext,applicationContext=" + SpringUtil.applicationContext + "========");
         System.out.println("---------------------------------------------------------------------");
 
     }

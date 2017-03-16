@@ -63,6 +63,8 @@
 	<script src="${pageContext.request.contextPath}/scripts/js.cookie.js"></script>
 </c:if>
 <%@ include file="i18next.inc"%>
+
+	<script src="${pageContext.request.contextPath}/scripts/util.js"></script>
 </head>
 <body class="sw-body">
 	<div class="sw-container">

@@ -24,4 +24,10 @@ public interface IDeviceAlertData extends IMetadataProviderEntity {
 
     public Double getValue();
 
+    public Double  getFrom();
+
+    public Double  getTo();
+
+    public String getAssignmenttoken();
+
 }

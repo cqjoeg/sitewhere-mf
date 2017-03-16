@@ -29,13 +29,31 @@ public class DeviceAlertData extends MetadataProviderEntity implements IDeviceAl
 
     private Double value;
 
+    private Double  from;
 
-    public DeviceAlertData(String hardwareid, String type, String comments, Date createddate, Double value) {
+    private Double  to;
+
+    private String assignmenttoken;
+
+//    public DeviceAlertData(String hardwareid, String type, String comments, Date createddate, Double value, Double  from, Double  to) {
+//        this.hardwareid = hardwareid;
+//        this.type = type;
+//        this.comments = comments;
+//        this.createddate = createddate;
+//        this.value = value;
+//        this.from = from;
+//        this.to = to;
+//    }
+
+    public DeviceAlertData(String hardwareid, String type, String comments, Date createddate, Double value, Double from, Double to, String assignmenttoken) {
         this.hardwareid = hardwareid;
         this.type = type;
         this.comments = comments;
         this.createddate = createddate;
         this.value = value;
+        this.from = from;
+        this.to = to;
+        this.assignmenttoken = assignmenttoken;
     }
 
     public String getHardwareid() {
@@ -79,5 +97,28 @@ public class DeviceAlertData extends MetadataProviderEntity implements IDeviceAl
     }
 
 
+    public Double  getFrom() {
+        return from;
+    }
+
+    public void setFrom(Double  from) {
+        this.from = from;
+    }
+
+    public Double  getTo() {
+        return to;
+    }
+
+    public void setTo(Double  to) {
+        this.to = to;
+    }
+
+    public String getAssignmenttoken() {
+        return assignmenttoken;
+    }
+
+    public void setAssignmenttoken(String assignmenttoken) {
+        this.assignmenttoken = assignmenttoken;
+    }
 }
 

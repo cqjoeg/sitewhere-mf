@@ -38,6 +38,7 @@
 			<ul>
 				<li class="k-state-active" data-i18n="includes.DeviceDetails"></li>
 				<li data-i18n="public.Metadata"></li>
+				<li data-i18n="public.MF"></li>
 			</ul>
 			<div>
 				<div style="padding-top: 20px;">
@@ -71,6 +72,16 @@
 					</jsp:include>
 				</div>
 			</div>
+
+			<div>
+				<dvi>
+					<jsp:include page="../includes/mfdata.jsp" flush="true">
+						<jsp:param name="mfid" value="du" />
+					</jsp:include>
+				</dvi>
+			</div>
+
+
 		</div>
 	</div>
 	<div class="modal-footer">
@@ -101,6 +112,8 @@
 
 	/** Dropdown with list of sites */
 	var duSitesDropdown;
+
+	var isUpdateDeviceData = false;
 
 	$(document)
 			.ready(
@@ -151,29 +164,38 @@
 											if (!duValidate()) {
 												return;
 											}
-											var hardwareId = $(
-													'#du-hardware-id').val();
+											var hardwareId = $('#du-hardware-id').val();
 											var deviceData = {
 												"hardwareId" : hardwareId,
-												"siteToken" : $(
-														'#du-site-token').val(),
-												"specificationToken" : $(
-														'#du-specification-token')
-														.val(),
-												"comments" : $('#du-comments')
-														.val(),
-												"metadata" : swMetadataAsLookup(duMetadataDS
-														.data()),
+												"siteToken" : $('#du-site-token').val(),
+												"specificationToken" : $('#du-specification-token').val(),
+												"comments" : $('#du-comments').val(),
+												"metadata" : swMetadataAsLookup(duMetadataDS.data()),
 											}
-											$
-													.putAuthJSON(
-															"${pageContext.request.contextPath}/api/devices/"
-																	+ hardwareId,
+											$.putAuthJSON(
+												"${pageContext.request.contextPath}/api/devices/"+ hardwareId,
 															deviceData,
 															"${basicAuth}",
 															"${tenant.authenticationToken}",
 															onUpdateSuccess,
 															onUpdateFail);
+											var data = {
+												"hardwareId": $('#dc-hardware-id').val(),
+												"type": "measurements",
+												"comments": "",
+												"definition" : du_MFData,
+												"started": true
+											};
+
+											$.putAuthJSON(
+												"${pageContext.request.contextPath}/api/device/field/"+ hardwareId,
+												data,
+												"${basicAuth}",
+												"${tenant.authenticationToken}",
+												null,
+												onUpdateFieldFail);
+
+
 										});
 
 						/** Called on successful update */
@@ -188,6 +210,12 @@
 						function onUpdateFail(jqXHR, textStatus, errorThrown) {
 							handleError(jqXHR, "Unable to update device.");
 						}
+
+						/** Handle failed call to update devicefield**/
+						function onUpdateFieldFail(jqXHR, textStatus, errorThrown) {
+							handleError(jqXHR, "Unable to update device field .");
+						}
+
 					});
 
 	/** Validate fields for update */
@@ -214,6 +242,13 @@
 		$.getAuthJSON("${pageContext.request.contextPath}/api/devices/"
 				+ hardwareId, "${basicAuth}", "${tenant.authenticationToken}",
 				duUpdateGetSuccess, duUpdateGetFailed);
+
+		// Get latest device data for hardware id.
+		$.getAuthJSON("${pageContext.request.contextPath}/api/device/field/"
+			+ hardwareId, "${basicAuth}", "${tenant.authenticationToken}",
+			duUpdateGetFieldSuccess, duUpdateGetFieldFailed);
+
+
 	}
 
 	/** Called on successful device load request */
@@ -243,4 +278,21 @@
 	function duUpdateGetFailed(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to get device for update.");
 	}
+
+
+	/** Called on successful device field load request**/
+	function duUpdateGetFieldSuccess(data, status, jqXHR){
+		if(!isNull(data.definition)){
+			du_MFData = data.definition;
+			initMFDataView_du();
+		}
+	}
+
+	/** Handle error on getting device field information */
+	function duUpdateGetFieldFailed(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to get device field for update.");
+	}
+
+
+
 </script>

@@ -1,6 +1,5 @@
 package com.sitewhere.spi.device.field.request;
 
-import com.sitewhere.spi.search.IDateRangeSearchCriteria;
 
 import java.util.Date;
 import java.util.Map;

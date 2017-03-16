@@ -6,8 +6,8 @@ import com.sitewhere.rest.model.device.field.DeviceAlertData;
 import com.sitewhere.rest.model.search.field.DeviceAlertDataSearchCriteria;
 import com.sitewhere.spi.device.field.domain.IDeviceALertDataEntity;
 import com.sitewhere.spi.device.field.service.IDeviceAlertDataService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -15,8 +15,8 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -30,11 +30,16 @@ public class DeviceAlertDataServiceImpl implements IDeviceAlertDataService {
     private DeviceAlertDataRepository deviceAlertDataRepository;
 
     @Override
-    public Page<IDeviceALertDataEntity> listDeviceAlertDatas(DeviceAlertDataSearchCriteria criteria) {
+    public List<IDeviceALertDataEntity> listDeviceAlertDatasByCriteria(DeviceAlertDataSearchCriteria criteria) {
         Order idOrder = new Order(Direction.DESC, "id");
         Sort sort = new Sort(idOrder);
         PageRequest pageRequest = new PageRequest(criteria.getPageNumber() - 1, criteria.getPageSize(), sort);
-        return deviceAlertDataRepository.findByHardwareid(criteria.getHardwareid(), pageRequest);
+
+        if (StringUtils.isNotEmpty(criteria.getAssignmentToken())){
+            return deviceAlertDataRepository.findByAssignmenttoken(criteria.getAssignmentToken(), pageRequest).getContent();
+        } else {
+            return deviceAlertDataRepository.findByHardwareid(criteria.getHardwareid(), pageRequest).getContent();
+        }
     }
 
     @Transactional
@@ -51,39 +56,48 @@ public class DeviceAlertDataServiceImpl implements IDeviceAlertDataService {
     }
 
     /**
+     * build DeviceAlertDataEntity
+     *
+     * @param deviceAlertData
      * @return
      */
-    public static DeviceALertDataEntity buildDefaultDeviceAlertDataEntity(String hardwareId, String type, String comments, Date date, Double value) {
-        return new DeviceALertDataEntity(hardwareId, type, comments, date, value);
-    }
-
     public static DeviceALertDataEntity buildDeviceAlertDataEntity(DeviceAlertData deviceAlertData) {
         if (deviceAlertData != null) {
             DeviceALertDataEntity deviceALertDataEntity = new DeviceALertDataEntity();
             deviceALertDataEntity.setHardwareid(deviceAlertData.getHardwareid());
             deviceALertDataEntity.setType(deviceAlertData.getType());
             deviceALertDataEntity.setComments(deviceAlertData.getComments());
-            deviceALertDataEntity.setCreateddate(deviceAlertData.getCreateddate());
+            deviceALertDataEntity.setCreateddate(new Timestamp(deviceAlertData.getCreateddate().getTime()));
+
             deviceALertDataEntity.setValue(deviceAlertData.getValue());
+            deviceALertDataEntity.setRange(deviceAlertData.getFrom() + "-" + deviceAlertData.getTo());
+            deviceALertDataEntity.setAssignmenttoken(deviceAlertData.getAssignmenttoken());
             return deviceALertDataEntity;
         } else {
             return null;
         }
     }
 
+    /**
+     * build DeviceAlertDataEntitys
+     *
+     * @param deviceAlertDatas
+     * @return
+     */
     public static List<DeviceALertDataEntity> buildDeviceAlertDataEntitys(List<DeviceAlertData> deviceAlertDatas) {
-        DeviceALertDataEntity defaultEntity = new DeviceALertDataEntity();
-        defaultEntity.setHardwareid(deviceAlertDatas.get(0).getHardwareid());
-        defaultEntity.setType(deviceAlertDatas.get(0).getType());
-        defaultEntity.setComments(deviceAlertDatas.get(0).getComments());
-        defaultEntity.setCreateddate(deviceAlertDatas.get(0).getCreateddate());
-        defaultEntity.setValue(deviceAlertDatas.get(0).getValue());
-
         List<DeviceALertDataEntity> deviceALertDataEntities = new ArrayList<DeviceALertDataEntity>();
         for (DeviceAlertData entity : deviceAlertDatas) {
+            DeviceALertDataEntity defaultEntity = new DeviceALertDataEntity();
+            defaultEntity.setHardwareid(entity.getHardwareid());
+            defaultEntity.setType(entity.getType());
             defaultEntity.setComments(entity.getComments());
-            defaultEntity.setCreateddate(entity.getCreateddate());
+            defaultEntity.setCreateddate(new Timestamp(entity.getCreateddate().getTime()));
             defaultEntity.setValue(entity.getValue());
+
+            defaultEntity.setComments(entity.getComments());
+            defaultEntity.setValue(entity.getValue());
+            defaultEntity.setRange(entity.getFrom() + "-" + entity.getTo());
+            defaultEntity.setAssignmenttoken(entity.getAssignmenttoken());
             deviceALertDataEntities.add(defaultEntity);
         }
         return deviceALertDataEntities;
@@ -91,3 +105,4 @@ public class DeviceAlertDataServiceImpl implements IDeviceAlertDataService {
 
 
 }
+

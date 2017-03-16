@@ -29,7 +29,7 @@ import com.sitewhere.spi.server.ISiteWhereApplication;
  * @author Derek
  */
 @Configuration
-@EnableAutoConfiguration(exclude = { HazelcastAutoConfiguration.class, ActiveMQAutoConfiguration.class })
+@EnableAutoConfiguration(exclude = { HazelcastAutoConfiguration.class, ActiveMQAutoConfiguration.class})
 public class SiteWhereApplication implements ISiteWhereApplication{
 
 	/** Static logger instance */

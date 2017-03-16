@@ -8,15 +8,15 @@
 package com.sitewhere.web;
 
 
-import com.sitewhere.SpringUtil;
+
+import com.sitewhere.measurefilter.mvc.controller.DeviceFieldController;
+import com.sitewhere.measurefilter.mvc.service.impl.DeviceFieldServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.*;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,6 +32,8 @@ import com.sitewhere.web.filters.ResponseTimerFilter;
 import com.sitewhere.web.mvc.MvcConfiguration;
 import com.sitewhere.web.rest.RestMvcConfiguration;
 import com.sitewhere.web.swagger.SiteWhereSwaggerConfig;
+
+import com.sitewhere.SpringUtil;
 import com.sitewhere.measurefilter.mvc.MFMvcConfiguration;
 
 /**
@@ -40,11 +42,10 @@ import com.sitewhere.measurefilter.mvc.MFMvcConfiguration;
  *
  * @author Derek
  */
+
 @Configuration
-@Import(SiteWhereSecurity.class)
-@ComponentScan(basePackages = {"com.sitewhere.measurefilter"})
-@SpringBootApplication
-@ServletComponentScan
+@Import(value = {SiteWhereSecurity.class})
+@ComponentScan(basePackageClasses={DeviceFieldServiceImpl.class})
 public class SiteWhereWebApplication extends SiteWhereApplication {
 
     /**
@@ -62,12 +63,17 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
         return tomcat;
     }
 
+    /**
+     * sitewhere rest 服务的配置
+     *
+     * @return
+     */
     @Bean
     public ServletRegistrationBean sitewhereRestInterface() {
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
         AnnotationConfigWebApplicationContext applicationContext =
                 new AnnotationConfigWebApplicationContext();
-        applicationContext.register(RestMvcConfiguration.class, SiteWhereSwaggerConfig.class);
+        applicationContext.register(RestMvcConfiguration.class, SiteWhereSwaggerConfig.class, MFMvcConfiguration.class);
         dispatcherServlet.setApplicationContext(applicationContext);
         ServletRegistrationBean registration =
                 new ServletRegistrationBean(dispatcherServlet, RestMvcConfiguration.REST_API_MATCHER);
@@ -75,6 +81,8 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
         registration.setLoadOnStartup(1);
         return registration;
     }
+
+//    MFMvcConfiguration.class
 
     @Bean
     public CorsFilter corsFilter() {
@@ -85,10 +93,18 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");
         config.addExposedHeader("Content-Type");
+        //添加
+//        config.addExposedHeader("X-SiteWhere-Tenant");
+
         source.registerCorsConfiguration("/api/**", config);
         return new CorsFilter(source);
     }
 
+    /**
+     * sitewhere web admin 的配置
+     *
+     * @return
+     */
     @Bean
     public ServletRegistrationBean sitewhereAdminInterface() {
         DispatcherServlet dispatcherServlet = new DispatcherServlet();
@@ -96,7 +112,9 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
                 new AnnotationConfigWebApplicationContext();
         applicationContext.register(MvcConfiguration.class);
         dispatcherServlet.setApplicationContext(applicationContext);
-        ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet, "/admin/*");
+
+        ServletRegistrationBean registration =
+                new ServletRegistrationBean(dispatcherServlet, "/admin/*");
         registration.setName("sitewhereAdminInterface");
         registration.setLoadOnStartup(2);
         return registration;
@@ -108,19 +126,6 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
         ServletRegistrationBean registration = new ServletRegistrationBean(redirect, "/admin");
         registration.setName("sitewhereRedirect");
         registration.setLoadOnStartup(3);
-        return registration;
-    }
-
-    @Bean
-    public ServletRegistrationBean sitewhereMeasureFilterInterface() {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        AnnotationConfigWebApplicationContext applicationContext =
-                new AnnotationConfigWebApplicationContext();
-        applicationContext.register(MFMvcConfiguration.class);
-        dispatcherServlet.setApplicationContext(applicationContext);
-        ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet, "/mf/*");
-        registration.setName("sitewhereMeasureFilterInterface");
-        registration.setLoadOnStartup(4);
         return registration;
     }
 
@@ -160,6 +165,8 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
         return registration;
     }
 
+
+
     /**
      * Acts on shutdown hook to gracefully shut down SiteWhere server components.
      *
@@ -174,6 +181,7 @@ public class SiteWhereWebApplication extends SiteWhereApplication {
     public SpringUtil springUtil() {
         return new SpringUtil();
     }
+
 
 
     public static void main(String[] args) {

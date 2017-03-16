@@ -37,6 +37,7 @@
     "DeviceMeasurements":"$t(public.Device) $t(public.Measurements)",
     "Alert":"Alert",
     "Alerts":"$t(public.Alert)s",
+    "MFAlerts" : "MFAlerts",
     "DeviceAlerts":"$t(public.Device) $t(public.Alerts)",
     "Date":"Date",
     "EventDate":"Event $t(public.Date)",
@@ -145,7 +146,11 @@
     "msg":{
        "areyousure":"Are you sure you want to",
        "delete":"delete"
-    }
+    },
+    "MF":"AdditionInboundFilter",
+    "From":"from",
+    "To":"to",
+    "Range":"Range"
   },
   "includes":{
        "Desc":"Desc",

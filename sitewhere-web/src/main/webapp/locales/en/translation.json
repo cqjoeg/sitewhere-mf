@@ -37,6 +37,7 @@
     "DeviceMeasurements":"$t(public.Device) $t(public.Measurements)",
     "Alert":"Alert",
     "Alerts":"$t(public.Alert)s",
+    "MFAlerts" : "MFAlerts",
     "DeviceAlerts":"$t(public.Device) $t(public.Alerts)",
     "Date":"Date",
     "EventDate":"Event $t(public.Date)",
@@ -147,7 +148,11 @@
     "msg":{
        "areyousure":"Are you sure you want to",
        "delete":"delete"
-    }
+    },
+    "MF":"DeviceFieldData",
+    "From":"From",
+    "To":"To",
+    "Range":"Range"
   },
   "includes":{
        "Desc":"Desc",
@@ -263,6 +268,9 @@
           "NIABU":"$t(public.Name) is already being used",
           "DeleteMetadata":"$t(public.Delete) $t(public.Metadata)"
        },
+        "mfdata":{
+          "DeleteMFdata":"$t(public.Delete)  $t(public.MF) "
+        },
        "deviceCreateDialog":{
           "UTCD":"$t(public.Unable) to create device."
        },

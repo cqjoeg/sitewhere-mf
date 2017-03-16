@@ -14,7 +14,6 @@ import com.sitewhere.spi.search.ISearchResults;
 import com.sitewhere.spi.user.SiteWhereRoles;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -111,8 +110,8 @@ public class DeviceInterfaceController extends MFBaseController {
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "100") int pageSize) {
         DeviceInterfaceSearchCriteria criteria = new DeviceInterfaceSearchCriteria(page, pageSize, hardwareId, methodName);
-        Page<IDeviceInterfaceEntity> pageList = deviceInterfaceService.listDeviceInterface(criteria);
-        return new SearchResults<IDeviceInterfaceEntity>(pageList.getContent(), pageList.getNumber());
+        List<IDeviceInterfaceEntity> pageList = deviceInterfaceService.listDeviceInterface(criteria);
+        return new SearchResults<IDeviceInterfaceEntity>(pageList, pageList.size());
     }
 
 

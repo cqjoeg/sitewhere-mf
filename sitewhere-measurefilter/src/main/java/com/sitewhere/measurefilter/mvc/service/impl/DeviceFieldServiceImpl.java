@@ -10,7 +10,6 @@ import com.sitewhere.spi.device.field.service.IDeviceFieldService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
@@ -20,7 +19,7 @@ import java.util.Date;
  */
 
 @Service(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL)
-@Transactional
+//@Transactional
 public class DeviceFieldServiceImpl implements IDeviceFieldService {
 
     /**
@@ -74,6 +73,12 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
     @Override
     public IDeviceField listDeviceFieldByHardwareIdAndType(String hardwareId, String type) {
         DeviceFieldEntity deviceFieldEntity = deviceFieldRepository.findByHardwareidAndType(hardwareId, type);
+        return DeviceField.copy(deviceFieldEntity);
+    }
+
+    @Override
+    public IDeviceField getDeviceFieldByHardwareId(String hardwareId) {
+        DeviceFieldEntity deviceFieldEntity = deviceFieldRepository.findByHardwareid(hardwareId);
         return DeviceField.copy(deviceFieldEntity);
     }
 

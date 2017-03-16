@@ -22,7 +22,6 @@ public class DeviceField extends MetadataProviderEntity implements IDeviceField,
      */
     private static final long serialVersionUID = 6538133812168463632L;
     public static final String MEASUREMENTS = "measurements";
-    public static final String ALERT = "alert";
 
     /**
      * Unique hardware id for device
@@ -121,11 +120,7 @@ public class DeviceField extends MetadataProviderEntity implements IDeviceField,
         deviceField.setHardwareId(definition.getHardwareid());
         deviceField.setType(definition.getType());
         deviceField.setComments(definition.getComments());
-        if (MEASUREMENTS.equals(definition.getType())) {
             deviceField.setDefinition(new Gson().fromJson(definition.getDefinition(), DeviceFieldDefinition.class));
-        } else if (ALERT.equals(definition.getType())) {
-            deviceField.setDefinition(new Gson().fromJson(definition.getDefinition(), DeviceAlertDefinition.class));
-        }
         deviceField.setStarted(definition.getStarted());
         deviceField.setCreateddate(definition.getCreateddate());
         deviceField.setDeleted(definition.getDeleted());

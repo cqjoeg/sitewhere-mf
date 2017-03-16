@@ -11,4 +11,8 @@ import com.sitewhere.spi.search.IDateRangeSearchCriteria;
 public interface IDeviceAlertDataSearchCriteria extends IDateRangeSearchCriteria {
 
     public String getHardwareid();
+
+    public String getAssignmentToken();
+
+
 }

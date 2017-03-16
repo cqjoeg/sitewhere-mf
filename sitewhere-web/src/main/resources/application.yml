@@ -1,6 +1,6 @@
 server:
-  context-path: /sitewhere
   port: 8080
+  context-path: /sitewhere
 spring:
   jpa:
     database: POSTGRESQL
@@ -14,5 +14,9 @@ spring:
     driver-class-name: org.postgresql.Driver
     log-abandoned: true
   data:
-    rest:
-      base-path: /api
+    jpa:
+      repositories:
+        enabled: true
+
+
+

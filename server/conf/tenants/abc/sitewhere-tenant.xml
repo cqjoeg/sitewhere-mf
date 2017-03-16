@@ -178,7 +178,7 @@
 
 			<!-- Inbound Processing Chain -->
 			<sw:inbound-processing-chain>
-			
+				<sw:measurements-filter-processor/>
 				<!-- Store events -->
 				<sw:event-storage-processor/>
 			

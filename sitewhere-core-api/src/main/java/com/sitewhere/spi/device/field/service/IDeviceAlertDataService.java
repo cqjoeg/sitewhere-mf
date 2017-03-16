@@ -3,7 +3,6 @@ package com.sitewhere.spi.device.field.service;
 import com.sitewhere.rest.model.device.field.DeviceAlertData;
 import com.sitewhere.rest.model.search.field.DeviceAlertDataSearchCriteria;
 import com.sitewhere.spi.device.field.domain.IDeviceALertDataEntity;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,14 +13,14 @@ import java.util.List;
 public interface IDeviceAlertDataService {
 
     public static final String DEVICE_ALERT_DATA_SERVICE_IMPL = "DeviceAlertDataServiceImpl";
-    
+
     /**
      * search by Criteria
      *
      * @param criteria
      * @return
      */
-    public Page<IDeviceALertDataEntity> listDeviceAlertDatas(DeviceAlertDataSearchCriteria criteria);
+    public List<IDeviceALertDataEntity> listDeviceAlertDatasByCriteria(DeviceAlertDataSearchCriteria criteria);
 
 
     /**

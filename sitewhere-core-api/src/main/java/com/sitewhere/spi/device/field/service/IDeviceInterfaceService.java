@@ -2,10 +2,10 @@ package com.sitewhere.spi.device.field.service;
 
 import com.sitewhere.rest.model.device.field.request.DeviceInterfaceCreateRequest;
 import com.sitewhere.rest.model.search.field.DeviceInterfaceSearchCriteria;
-import com.sitewhere.spi.device.field.IDeviceField;
 import com.sitewhere.spi.device.field.IDeviceInterface;
 import com.sitewhere.spi.device.field.domain.IDeviceInterfaceEntity;
-import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 /**
  * Interface of DeviceInterfaceService
@@ -45,7 +45,7 @@ public interface IDeviceInterfaceService {
      * @param criteria
      * @return
      */
-    Page<IDeviceInterfaceEntity> listDeviceInterface(DeviceInterfaceSearchCriteria criteria);
+    List<IDeviceInterfaceEntity> listDeviceInterface(DeviceInterfaceSearchCriteria criteria);
 
     /**
      * get DeviceInterface

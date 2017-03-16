@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
 /**
  * Repository for DeviceAlertData
@@ -26,6 +25,13 @@ public interface DeviceAlertDataRepository extends PagingAndSortingRepository<De
      * @return
      */
     Page<IDeviceALertDataEntity> findByHardwareid(String hardwareid, Pageable pageable);
+
+
+//    Page<IDeviceALertDataEntity> findByHardwareidAndAssignmenttoken(String hardwareid, String assignmenttoken, Pageable pageable);
+
+
+    Page<IDeviceALertDataEntity> findByAssignmenttoken(String assignmenttoken, Pageable pageable);
+
 
 
     /**

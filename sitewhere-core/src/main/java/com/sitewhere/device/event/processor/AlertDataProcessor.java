@@ -4,8 +4,8 @@ import com.sitewhere.SiteWhere;
 import com.sitewhere.SpringUtil;
 import com.sitewhere.rest.model.device.event.request.DeviceCommandResponseCreateRequest;
 import com.sitewhere.rest.model.device.field.DeviceAlertData;
-import com.sitewhere.rest.model.device.field.DeviceAlertDefinition;
-import com.sitewhere.rest.model.device.field.DeviceAlertRangeDefinition;
+import com.sitewhere.rest.model.device.field.DeviceFieldDefinition;
+import com.sitewhere.rest.model.device.field.DeviceKeyDefinition;
 import com.sitewhere.rest.model.device.field.DeviceField;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
@@ -22,6 +22,7 @@ import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -56,29 +57,32 @@ public class AlertDataProcessor extends InboundEventProcessor {
      */
     @Override
     public void onDeviceMeasurementsCreateRequest(String hardwareId, String originator,
-                                                  IDeviceMeasurementsCreateRequest request) throws SiteWhereException, BeansException {
+                                                  IDeviceMeasurementsCreateRequest request)
+            throws SiteWhereException, BeansException {
 
-
+        IDevice device = getDeviceManagement().getDeviceByHardwareId(hardwareId);
+        if(device != null){
         IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
-        IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.ALERT);
+        IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.MEASUREMENTS);
         if (deviceField == null)
             return;
 
-        List<DeviceAlertRangeDefinition> list = ((DeviceAlertDefinition) deviceField.getDefinition()).getKeys();
+        IDeviceAssignment assignment = getCurrentAssignment(hardwareId);
+        List<DeviceKeyDefinition> list = ((DeviceFieldDefinition) deviceField.getDefinition()).getKeys();
 
         Set<String> requestKeys = request.getMeasurements().keySet();//所有的 measurements 的key 值
         List<DeviceAlertData> deviceALertDataEntities = new ArrayList<DeviceAlertData>();
 
-        for (DeviceAlertRangeDefinition deviceAlertRangeDefinition : list) {
-            if (requestKeys.contains(deviceAlertRangeDefinition.getKey())) {
-                List<DeviceAlertRangeDefinition.AlertRange> rangesList = deviceAlertRangeDefinition.getRanges();
-                for (DeviceAlertRangeDefinition.AlertRange alertRange : rangesList) {
-                    Double requestValue = request.getMeasurements().get(deviceAlertRangeDefinition.getKey());
+        for (DeviceKeyDefinition dkd : list) {
+            if (requestKeys.contains(dkd.getKey())) {
+                List<DeviceKeyDefinition.AlertRange> rangesList = dkd.getRanges();
+                for (DeviceKeyDefinition.AlertRange alertRange : rangesList) {
+                    Double requestValue = request.getMeasurements().get(dkd.getKey());
                     Double from = alertRange.getFrom();
                     Double to = alertRange.getTo();
                     if (from <= requestValue && requestValue <= to)
                         deviceALertDataEntities.add(
-                                new DeviceAlertData(hardwareId, "", alertRange.getMessage(), new Date(), requestValue)
+                                new DeviceAlertData(hardwareId, dkd.getKey(), alertRange.getMessage(), request.getEventDate(), requestValue, from, to, assignment.getToken())
                         );
                 }
 
@@ -89,6 +93,10 @@ public class AlertDataProcessor extends InboundEventProcessor {
             IDeviceAlertDataService deviceFieldAPI1 = (IDeviceAlertDataService) SpringUtil.getBean(IDeviceAlertDataService.DEVICE_ALERT_DATA_SERVICE_IMPL);
             deviceFieldAPI1.batchInsert(deviceALertDataEntities);
         }
+
+        }
+
+
     }
 
     /**

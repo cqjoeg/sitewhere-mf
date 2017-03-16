@@ -14,7 +14,7 @@ public interface IDeviceFieldService {
     /**
      * impl class name ；register Bean name
      */
-    public static final String DEVICE_FIELD_SERVICE_IMPL = "DeviceFieldServiceImpl";
+    public static final String DEVICE_FIELD_SERVICE_IMPL = "deviceFieldServiceImpl";
 
     /**
      * insert interface
@@ -49,5 +49,12 @@ public interface IDeviceFieldService {
      * @param type
      */
     public IDeviceField listDeviceFieldByHardwareIdAndType(String hardwareId, String type);
+
+    /**
+     * get device field by hardwareid
+     * @param hardwareId
+     * @return
+     */
+    public IDeviceField getDeviceFieldByHardwareId(String hardwareId);
 
 }
