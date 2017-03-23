@@ -135,14 +135,21 @@
     "MF":"入站处理",
     "From":"从",
     "To":"到",
-    "Range":"范围"
+    "Range":"范围",
+    "Interface":"接口",
+    "OperatioName":"操作名",
+    "Script" : "脚本",
+    "CommandInterface":"操作$t(public.Interface)"
   },
   "includes":{
+        "CreateInterface":"$t(public.Create)$t(public.Interface)",
        "Desc":"$t(public.Description)",
        "Center":"中心",
        "Zoom":"缩放",
        "Comments":"建议",
        "Missing":"丢失",
+        "InterfaceName":"$t(public.Interface) $t(public.Name)",
+       "InterfaceDetails":"$t(public.Interface) $t(public.Details)",
        "DeviceDetails":"$t(public.device)$t(public.Details)",
        "CommandDetails":"$t(public.Command)$t(public.Details)",
        "CreateDevice":"$t(public.Create)$t(public.device)",
@@ -172,6 +179,10 @@
        "templateInvocationEntry":{
           "ViewInvocation":"$t(public.View)$t(public.Invocation)"
        },
+    "templateDeviceInterfaceEntry":{
+      "ViewInterfaceOperate":"查看接口操作",
+      "ViewInterfaceEdit":"编辑接口"
+    },
        "deviceSearchDialog":{
           "Select":"选择"
        },
@@ -366,7 +377,10 @@
         "title":"$t(public.Manage)$t(public.Devices)",
         "BatchCommand":"批量$t(public.Command)",
         "AddNewDevice":"$t(public.Add)$t(public.New)$t(public.Device)"
-     }
+     },
+    "interface":{
+      "create":"创建接口"
+    }
   },
   "groups":{
      "detail":{

@@ -581,8 +581,7 @@
 						$("#zones").kendoGrid(
 								{
 									dataSource : zonesDS,
-									rowTemplate : kendo.template($(
-											"#tpl-zone-entry").html()),
+									rowTemplate : kendo.template($("#tpl-zone-entry").html()),
 									scrollable : true,
 									height : gridHeight,
 								});

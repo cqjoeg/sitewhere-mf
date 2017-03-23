@@ -40,7 +40,8 @@ table#invocations tr td {
 		<li>&nbsp;<font data-i18n="public.Alerts"></font></li>
 		<li>&nbsp;<font data-i18n="public.CommandInvocations"></font></li>
 		<li>&nbsp;<font data-i18n="public.MFAlerts"></font></li>
-
+		<%--<li>&nbsp;<font data-i18n="public.Interface"></font></li>--%>
+		<li>&nbsp;<font data-i18n="public.Interface"></font></li>
 	</ul>
 	<%-- location--%>
 	<div>
@@ -195,15 +196,12 @@ table#invocations tr td {
 		</table>
 		<div id="invocations-pager" class="k-pager-wrap event-pager"></div>
 	</div>
-
 	<%-- my alerts data --%>
 	<div>
 		<div class="k-header sw-button-bar">
 			<div class="sw-button-bar-title" data-i18n="public.DeviceAlerts"></div>
 			<div>
-				<a id="btn-filter-mf-alerts" class="btn" href="javascript:void(0)">
-					<i class="fa fa-search sw-button-icon"></i> <span data-i18n="public.FilterResults">Filter Results</span></a>
-				<a id="btn-refresh-mf-alerts" class="btn" href="javascript:void(0)">
+					<a id="btn-refresh-mf-alerts" class="btn" href="javascript:void(0)">
 					<i class="fa fa-refresh sw-button-icon"></i> <span data-i18n="public.Refresh">Refresh</span>
 			</a>
 			</div>
@@ -231,6 +229,43 @@ table#invocations tr td {
 		</table>
 		<div id="mf-alerts-pager" class="k-pager-wrap event-pager"></div>
 	</div>
+	<%--device interface  (no-edit)--%>
+	<div>
+		<div class="k-header sw-button-bar">
+			<div class="sw-button-bar-title"
+				 data-i18n="assignments.detail.DeviceCommandInvocations"></div>
+			<div>
+				<a id="btn-refresh-device-interface" class="btn"
+				   href="javascript:void(0)"> <i
+						class="fa fa-refresh sw-button-icon"></i> <span
+						data-i18n="public.Refresh">Refresh</span>
+				</a>
+
+				<a id="btn-create-devcie-interface" class="btn" href="javascript:void(0)">
+					<i class="fa fa-bolt sw-button-icon"></i> <span
+						data-i18n="devices.interface.create">Create Interface</span>
+				</a>
+			</div>
+		</div>
+		<table id="device-interface">
+			<colgroup>
+				<col style="width: 50%;" />
+				<col style="width: 50%;" />
+			</colgroup>
+			<thead>
+			<tr>
+				<th data-i18n="public.OperatioName"></th>
+				<th data-i18n="public.Invocation"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td colspan="2"></td>
+			</tr>
+			</tbody>
+		</table>
+		<div id="device-interface-pager" class="k-pager-wrap event-pager"></div>
+	</div>
 
 
 </div>
@@ -249,6 +284,10 @@ table#invocations tr td {
 <%@ include file="../includes/templateDeviceFieldAlertsEntry.inc"%>
 <%@ include file="../includes/commonFunctions.inc"%>
 
+
+<%@ include file="../includes/templateDeviceInterfaceEntryNOEdit.inc"%>
+<%@ include file="../includes/interfaceOperateDialog.inc"%>
+<%@ include file="../includes/interfaceCreateDialog.inc"%>
 <script>
 	/** Set sitewhere_title */
 	sitewhere_i18next.sitewhere_title = "assignments.detail.title";
@@ -273,6 +312,9 @@ table#invocations tr td {
 
 	/** Datasource for field alerts**/
 	var fieldAlertsDS;
+
+	/** Datasource for device interface**/
+	var deviceInterfaceDS;
 
 	/** Reference to tab panel */
 	var tabs;
@@ -326,6 +368,11 @@ table#invocations tr td {
 		ivOpen(id);
 	}
 
+	/** Called when a interface    has been successfully created */
+	function onInterfaceCreated() {
+		deviceInterfaceDS.read();
+	}
+
 	$(document).ready(function() {
 
 /** Create AJAX datasource for locations list */
@@ -356,7 +403,6 @@ table#invocations tr td {
 									serverSorting : true,
 									pageSize : pageSize,
 								});
-
 						/** Create the location list */
 						$("#locations").kendoGrid(
 								{
@@ -574,10 +620,63 @@ table#invocations tr td {
 		});
 		$('#btn-filter-mf-alerts').attr('disabled', true);
 
+
+		/** create ajax datasource for device interface  **/
+		deviceInterfaceDS = new kendo.data.DataSource({
+					transport : {
+						read : {
+							url : "${pageContext.request.contextPath}/api/device/interface/"+token + "/token",
+							beforeSend : function(req) {
+								req.setRequestHeader(
+										'Authorization',
+										"Basic ${basicAuth}");
+								req
+										.setRequestHeader(
+												'X-SiteWhere-Tenant',
+												"${tenant.authenticationToken}");
+							},
+							dataType : "json",
+						}
+					},
+					schema : {
+						data : "results",
+						total : "numResults",
+						parse : function(response){
+							return response;
+						}
+					},
+					serverPaging : true,
+					serverSorting : true,
+					pageSize : 15,
+				}
+		);
+		/** Create the device interface list */
+		$("#device-interface").kendoGrid({
+					dataSource : deviceInterfaceDS,
+					rowTemplate : kendo.template($("#tpl-devcie-interface-entry-no-edit").html()),
+					scrollable : true,
+					height : gridHeight
+				});
+
+		$("#device-interface-pager").kendoPager({
+			dataSource : deviceInterfaceDS
+		});
+
+		/** device interface refresh**/
+		$("#btn-refresh-device-interface").click(function() {
+			deviceInterfaceDS.read();
+		});
+
+
+
 						$("#btn-edit-assignment").click(function() {
 							auOpen(token, onAssignmentEditSuccess);
 						});
 
+						/** Handle interface create dialog */
+						$("#btn-create-devcie-interface").click(function(event) {
+							icOpen(event, onInterfaceCreated);
+						});
 						/** Create the tab strip */
 						tabs = $("#tabs").kendoTabStrip({
 							animation : false,
@@ -585,9 +684,13 @@ table#invocations tr td {
 						}).data("kendoTabStrip");
 
 						loadAssignment();
-
-
 					});
+
+	/** Called to interface operation**/
+	function onViewInterfaceOperate(hardwareid, methodname){
+		console.log("use onViewInterfaceOperate");
+		dioOpen(hardwareid, methodname);
+	}
 
 
 
@@ -606,6 +709,12 @@ table#invocations tr td {
 				e.item.swInitialized = true;
 			} else if (tabName == "Command Invocations") {
 				invocationsDS.read();
+				e.item.swInitialized = true;
+			} else if (tabName == "MFAlerts"){
+				fieldAlertsDS.read();
+				e.item.swInitialized = true;
+			} else if(tabName == "Interface"){
+				deviceInterfaceDS.read();
 				e.item.swInitialized = true;
 			}
 		}

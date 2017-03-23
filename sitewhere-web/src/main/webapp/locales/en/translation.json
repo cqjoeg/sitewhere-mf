@@ -152,14 +152,21 @@
     "MF":"DeviceFieldData",
     "From":"From",
     "To":"To",
-    "Range":"Range"
+    "Range":"Range",
+    "Interface":"Interface",
+    "OperatioName":"OperatioName",
+    "Script" : "Script",
+    "CommandInterface":"Commond $t(public.Interface)"
   },
   "includes":{
+      "CreateInterface":"$t(public.Create)$t(public.Interface)",
        "Desc":"Desc",
        "Center":"Center",
        "Zoom":"Zoom",
        "Comments":"Comments",
        "Missing":"Missing",
+        "InterfaceName":"$t(public.Interface) $t(public.Name)",
+        "InterfaceDetails":"$t(public.Interface) $t(public.Details)",
        "DeviceDetails":"$t(public.Device) $t(public.Details)",
        "CommandDetails":"$t(public.Command) $t(public.Details)",
        "CreateDevice":"$t(public.Create) $t(public.device)",
@@ -189,6 +196,10 @@
        "templateInvocationEntry":{
           "ViewInvocation":"$t(public.View) $t(public.Invocation)"
        },
+        "templateDeviceInterfaceEntry":{
+          "ViewInterfaceOperate":"View Interface Operate",
+          "ViewInterfaceEdit":"View Interface Edit"
+        },
        "deviceSearchDialog":{
           "Select":"Select"
        },
@@ -414,7 +425,10 @@
         "title":"$t(public.Manage) $t(public.Devices)",
         "BatchCommand":"$t(public.Batch) $t(public.Command)",
         "AddNewDevice":"$t(public.Add) $t(public.New) $t(public.Device)"
-     }
+     },
+    "interface":{
+      "create":"Create Interface"
+    }
   },
   "groups":{
      "detail":{

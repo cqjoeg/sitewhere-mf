@@ -60,8 +60,9 @@ public class MeasureFilterProcessor extends InboundEventProcessor {
         if (device != null) {
             IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
             IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.MEASUREMENTS);
+            if( deviceField == null)
+                return;
             List<DeviceKeyDefinition> list = ((DeviceFieldDefinition) deviceField.getDefinition()).getKeys();
-
             //得到 key值 list
             List<String> result = new ArrayList<String>();
             Iterator iter = list.iterator();

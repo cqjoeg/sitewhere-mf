@@ -101,6 +101,7 @@ public class DeviceInterfaceController extends MFBaseController {
         return null;
     }
 
+
     @RequestMapping(value = "/{hardwareId}", method = RequestMethod.GET)
     @ResponseBody
     @Secured({SiteWhereRoles.REST})
@@ -108,8 +109,26 @@ public class DeviceInterfaceController extends MFBaseController {
             @PathVariable String hardwareId,
             @RequestParam(required = false) String methodName,
             @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "100") int pageSize) {
+            @RequestParam(required = false, defaultValue = "100") int pageSize,
+            HttpServletRequest servletRequest) throws SiteWhereException {
+
         DeviceInterfaceSearchCriteria criteria = new DeviceInterfaceSearchCriteria(page, pageSize, hardwareId, methodName);
+        List<IDeviceInterfaceEntity> pageList = deviceInterfaceService.listDeviceInterface(criteria);
+        return new SearchResults<IDeviceInterfaceEntity>(pageList, pageList.size());
+    }
+
+
+    @RequestMapping(value = "/{token}/token", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured({SiteWhereRoles.REST})
+    public ISearchResults<IDeviceInterfaceEntity> listDeviceInterface(
+            @PathVariable String token,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false, defaultValue = "100") int pageSize,
+            HttpServletRequest servletRequest) throws SiteWhereException {
+
+        String hardwareId = SiteWhere.getServer().getDeviceManagement(getTenant(servletRequest)).getDeviceAssignmentByToken(token).getDeviceHardwareId();
+        DeviceInterfaceSearchCriteria criteria = new DeviceInterfaceSearchCriteria(page, pageSize, hardwareId, null);
         List<IDeviceInterfaceEntity> pageList = deviceInterfaceService.listDeviceInterface(criteria);
         return new SearchResults<IDeviceInterfaceEntity>(pageList, pageList.size());
     }
@@ -130,7 +149,9 @@ public class DeviceInterfaceController extends MFBaseController {
         String script = deviceInterface.getScript();
         String eventType = deviceInterface.getDefinition().getEventType();
 
+        //后面 seacher 的数据都是 当前 hardwareid 下
         String token = getAssignmentTokenByHardwareId(hardwareid, servletRequest);
+
         DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(request.getPageNumber(), request.getPageSize(), request.getStartDate(), request.getEndDate());
         ISearchResults<?> sr = null;
         switch (eventType) {

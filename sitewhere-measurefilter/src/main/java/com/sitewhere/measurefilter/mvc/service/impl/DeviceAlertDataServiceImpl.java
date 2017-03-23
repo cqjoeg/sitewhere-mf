@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -45,13 +46,13 @@ public class DeviceAlertDataServiceImpl implements IDeviceAlertDataService {
     @Transactional
     @Override
     public void insertDeviceAlertData(DeviceAlertData deviceAlertData) {
-        if (deviceAlertData != null)
+        if (!ObjectUtils.isEmpty(deviceAlertData))
             deviceAlertDataRepository.save(buildDeviceAlertDataEntity(deviceAlertData));
     }
 
     @Override
     public void batchInsert(List<DeviceAlertData> deviceAlertDatas) {
-        if (deviceAlertDatas != null && deviceAlertDatas.size() > 0)
+        if (!ObjectUtils.isEmpty(deviceAlertDatas))
             deviceAlertDataRepository.save(buildDeviceAlertDataEntitys(deviceAlertDatas));
     }
 
@@ -62,7 +63,7 @@ public class DeviceAlertDataServiceImpl implements IDeviceAlertDataService {
      * @return
      */
     public static DeviceALertDataEntity buildDeviceAlertDataEntity(DeviceAlertData deviceAlertData) {
-        if (deviceAlertData != null) {
+        if (!ObjectUtils.isEmpty(deviceAlertData )) {
             DeviceALertDataEntity deviceALertDataEntity = new DeviceALertDataEntity();
             deviceALertDataEntity.setHardwareid(deviceAlertData.getHardwareid());
             deviceALertDataEntity.setType(deviceAlertData.getType());

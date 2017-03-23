@@ -17,6 +17,13 @@ public interface DeviceInterfaceRepository extends PagingAndSortingRepository<De
 
 
     /**
+     * 更具id 进行查询
+     * @param id
+     * @return
+     */
+    public DeviceInterfaceEntity findById(Integer id);
+
+    /**
      * 更具硬件id 和 methodname 进行查询
      *
      * @param hardwareid
@@ -24,7 +31,6 @@ public interface DeviceInterfaceRepository extends PagingAndSortingRepository<De
      * @return
      */
     public DeviceInterfaceEntity findByHardwareidAndMethodname(String hardwareid, String methodname);
-
 
     /**
      * 更具硬件id进行 分页查询

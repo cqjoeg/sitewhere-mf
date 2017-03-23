@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface IDeviceInterfaceService {
 
+
     /**
      * insert device method
      *
@@ -54,5 +55,12 @@ public interface IDeviceInterfaceService {
      * @return
      */
     IDeviceInterface getDeviceInterfaceByHardwareIdAndMethodName(String hardwareId, String methodName);
+
+    /**
+     * get DeviceInterface by id
+     * @param id
+     * @return
+     */
+    IDeviceInterface getDeviceInterfaceById(Integer id);
 }
 

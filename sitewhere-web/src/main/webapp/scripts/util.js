@@ -17,3 +17,13 @@ function isNull(val) {
     }
     return false;
 }
+
+function hasObj(obj,str){
+    if(obj.hasOwnProperty(str)) {
+        return true;
+    }
+    return false;
+}
+
+
+

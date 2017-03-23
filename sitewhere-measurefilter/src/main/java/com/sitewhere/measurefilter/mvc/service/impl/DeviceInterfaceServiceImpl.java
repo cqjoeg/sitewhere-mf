@@ -40,6 +40,7 @@ public class DeviceInterfaceServiceImpl implements IDeviceInterfaceService {
     @Autowired
     private DeviceInterfaceRepository deviceInterfaceRepository;
 
+
     @Override
     public IDeviceInterface insertDeviceInterface(DeviceInterfaceCreateRequest deviceInterfaceCreateRequest) {
 
@@ -91,10 +92,24 @@ public class DeviceInterfaceServiceImpl implements IDeviceInterfaceService {
 
     @Override
     public IDeviceInterface getDeviceInterfaceByHardwareIdAndMethodName(String hardwareId, String methodName) {
-        return DeviceInterface.copy(deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName)) ;
+        DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findByHardwareidAndMethodname(hardwareId, methodName);
+        if (ObjectUtils.isEmpty(deviceInterfaceEntity)){
+            return null;
+        }
+        return DeviceInterface.copy(deviceInterfaceEntity) ;
+    }
+
+    @Override
+    public IDeviceInterface getDeviceInterfaceById(Integer id) {
+        DeviceInterfaceEntity deviceInterfaceEntity = deviceInterfaceRepository.findById(id);
+        if(ObjectUtils.isEmpty(deviceInterfaceEntity)){
+            return  null;
+        }
+        return DeviceInterface.copy(deviceInterfaceEntity);
     }
 
     public static DeviceInterfaceEntity buildDeviceInterfaceEntity(IDeviceInterfaceCreateRequest request) {
+
         return new DeviceInterfaceEntity(
                 request.getHardwareid(),
                 request.getComments(),

@@ -25,8 +25,8 @@
 <!-- Tab panel -->
 <div id="tabs">
 	<ul>
-		<li class="k-state-active">&nbsp;<font
-			data-i18n="devices.detail.AssignmentHistory"></font></li>
+		<li class="k-state-active">&nbsp;<font data-i18n="devices.detail.AssignmentHistory"></font></li>
+		<li>&nbsp;<font data-i18n="public.Interface"></font></li>
 		<c:choose>
 			<c:when test="${specification.containerPolicy == 'Composite'}">
 				<li>&nbsp;<font data-i18n="public.Composition"></font></li>
@@ -54,6 +54,47 @@
 		<div id="assignments" class="sw-assignment-list"></div>
 		<div id="assignments-pager" class="k-pager-wrap"></div>
 	</div>
+	<%--device interface --%>
+	<div>
+		<div class="k-header sw-button-bar">
+			<div class="sw-button-bar-title"
+				 data-i18n="assignments.detail.DeviceCommandInvocations"></div>
+			<div>
+				<a id="btn-refresh-device-interface" class="btn"
+				   href="javascript:void(0)"> <i
+						class="fa fa-refresh sw-button-icon"></i> <span
+						data-i18n="public.Refresh">Refresh</span>
+				</a>
+
+				<a id="btn-create-devcie-interface" class="btn" href="javascript:void(0)">
+					<i class="fa fa-bolt sw-button-icon"></i> <span
+						data-i18n="devices.interface.create">Create Interface</span>
+				</a>
+			</div>
+		</div>
+		<table id="device-interface">
+			<colgroup>
+				<col style="width: 50%;" />
+				<%--<col style="width: 30%;" />--%>
+				<col style="width: 50%;" />
+			</colgroup>
+			<thead>
+			<tr>
+				<th data-i18n="public.OperatioName"></th>
+				<%--<th data-i18n="public.Invocation"></th>--%>
+				<th data-i18n="public.Edit"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td colspan="2"></td>
+			</tr>
+			</tbody>
+		</table>
+		<div id="device-interface-pager" class="k-pager-wrap event-pager"></div>
+	</div>
+
+
 	<c:choose>
 		<c:when test="${specification.containerPolicy == 'Composite'}">
 			<div>
@@ -61,6 +102,8 @@
 			</div>
 		</c:when>
 	</c:choose>
+
+
 </div>
 
 <form id="view-assignment-detail" method="get"></form>
@@ -76,6 +119,11 @@
 <%@ include file="../includes/templateAssignmentEntry.inc"%>
 <%@ include file="../includes/commonFunctions.inc"%>
 
+
+<%@ include file="../includes/templateDeviceInterfaceEntry.inc"%>
+<%@ include file="../includes/interfaceCreateDialog.inc"%>
+<%--<%@ include file="../includes/interfaceOperateDialog.inc"%>--%>
+
 <script>
 	/** Set sitewhere_title */
 	sitewhere_i18next.sitewhere_title = "devices.detail.title";
@@ -85,8 +133,14 @@
 	/** Datasource for assignments */
 	var assignmentsDS;
 
+	/** Datasource for device interface**/
+	var deviceInterfaceDS;
+
 	/** Maps device element schema paths to device information */
 	var mappings;
+
+	/** Height of event grids */
+	var gridHeight = 350;
 
 	/** Called when 'delete assignment' is clicked */
 	function onDeleteAssignment(e, token) {
@@ -158,10 +212,14 @@
 		assignmentsDS.read();
 	}
 
-	$(document)
-			.ready(
-					function() {
 
+	/** Called when a interface    has been successfully created */
+	function onInterfaceCreated() {
+		deviceInterfaceDS.read();
+	}
+
+
+	$(document).ready(function() {
 						/** Create AJAX datasource for assignments list */
 						assignmentsDS = new kendo.data.DataSource(
 								{
@@ -222,13 +280,100 @@
 							acOpen(null, hardwareId, onAssignmentAdded);
 						});
 
+						/** create ajax datasource for device interface  **/
+						deviceInterfaceDS = new kendo.data.DataSource(
+								{
+									transport : {
+										read : {
+											url : "${pageContext.request.contextPath}/api/device/interface/"+hardwareId,
+											beforeSend : function(req) {
+												req.setRequestHeader(
+														'Authorization',
+														"Basic ${basicAuth}");
+												req
+														.setRequestHeader(
+																'X-SiteWhere-Tenant',
+																"${tenant.authenticationToken}");
+											},
+											dataType : "json",
+										}
+									},
+									schema : {
+										data : "results",
+										total : "numResults",
+										parse : function(response){
+											return response;
+										}
+									},
+									serverPaging : true,
+									serverSorting : true,
+									pageSize : 15,
+								}
+						);
+						/** Create the device interface list */
+						$("#device-interface").kendoGrid(
+								{
+									dataSource : deviceInterfaceDS,
+									rowTemplate : kendo.template($("#tpl-devcie-interface-entry").html()),
+									scrollable : true,
+									height : gridHeight
+								});
+
+						$("#device-interface-pager").kendoPager({
+							dataSource : deviceInterfaceDS
+						});
+
+						/** device interface refresh**/
+						$("#btn-refresh-device-interface").click(function() {
+							deviceInterfaceDS.read();
+						});
+						/** Handle interface create dialog */
+						$("#btn-create-devcie-interface").click(function(event) {
+							icOpen(event, onInterfaceCreated);
+						});
+
+
 						/** Create the tab strip */
 						tabs = $("#tabs").kendoTabStrip({
-							animation : false
+							animation : false,
+							activate : onActivate
 						}).data("kendoTabStrip");
 
 						loadDevice();
 					});
+
+
+	/** Force grid refresh on first tab activate (KendoUI bug) */
+	function onActivate(e) {
+		var tabName = e.item.textContent;
+		if (!e.item.swInitialized) {
+			if (tabName == "AssignmentHistory") {
+				assignmentsDS.read();
+				e.item.swInitialized = true;
+			} else if (tabName == "Interface") {
+				deviceInterfaceDS.read();
+				e.item.swInitialized = true;
+			}
+		}
+	};
+
+	/** Called to interface operation**/
+//	function onViewInterfaceOperate(hardwareid, methodname){
+//		dioOpen(hardwareid, methodname);
+//	}
+
+	/** Called to interface edit**/
+	function onViewInterfaceEdit(meathodId) {
+
+	}
+
+	/** Parses event response records to format dates */
+	function parseEventResults(response) {
+		$.each(response.results, function(index, item) {
+			parseEventData(item);
+		});
+		return response;
+	}
 
 	/** Loads information for the selected device */
 	function loadDevice() {

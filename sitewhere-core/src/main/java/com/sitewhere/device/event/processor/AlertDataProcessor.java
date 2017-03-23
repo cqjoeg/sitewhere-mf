@@ -63,7 +63,7 @@ public class AlertDataProcessor extends InboundEventProcessor {
         IDevice device = getDeviceManagement().getDeviceByHardwareId(hardwareId);
         if(device != null){
         IDeviceFieldService deviceFieldServiceImpl = (IDeviceFieldService) SpringUtil.getBean(IDeviceFieldService.DEVICE_FIELD_SERVICE_IMPL);
-        IDeviceField deviceField = deviceFieldServiceImpl.listDeviceFieldByHardwareIdAndType(hardwareId, DeviceField.MEASUREMENTS);
+        IDeviceField deviceField = deviceFieldServiceImpl.getDeviceFieldByHardwareId(hardwareId);
         if (deviceField == null)
             return;
 
@@ -75,7 +75,7 @@ public class AlertDataProcessor extends InboundEventProcessor {
 
         for (DeviceKeyDefinition dkd : list) {
             if (requestKeys.contains(dkd.getKey())) {
-                List<DeviceKeyDefinition.AlertRange> rangesList = dkd.getRanges();
+                List<DeviceKeyDefinition.AlertRange> rangesList = dkd.getAlertRanges();
                 for (DeviceKeyDefinition.AlertRange alertRange : rangesList) {
                     Double requestValue = request.getMeasurements().get(dkd.getKey());
                     Double from = alertRange.getFrom();

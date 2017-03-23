@@ -57,10 +57,14 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
     @Override
     public IDeviceField updateDeviceField(String hardwareId, DeviceFieldCreateRequest deviceField) {
         DeviceFieldEntity tmp = deviceFieldRepository.findByHardwareidAndType(hardwareId, deviceField.getType());
-        tmp.setComments(deviceField.getComments());
-        tmp.setDefinition(deviceField.getDefinitionToString());
-        tmp.setStarted(deviceField.getStarted());
-        return DeviceField.copy(deviceFieldRepository.save(tmp));
+        if (ObjectUtils.isEmpty(tmp) ){
+            return null;
+        } else {
+            tmp.setComments(deviceField.getComments());
+            tmp.setDefinition(deviceField.getDefinitionToString());
+            tmp.setStarted(deviceField.getStarted());
+            return DeviceField.copy(deviceFieldRepository.save(tmp));
+        }
 
     }
 
@@ -73,12 +77,18 @@ public class DeviceFieldServiceImpl implements IDeviceFieldService {
     @Override
     public IDeviceField listDeviceFieldByHardwareIdAndType(String hardwareId, String type) {
         DeviceFieldEntity deviceFieldEntity = deviceFieldRepository.findByHardwareidAndType(hardwareId, type);
+        if (ObjectUtils.isEmpty(deviceFieldEntity) ){
+            return null;
+        }
         return DeviceField.copy(deviceFieldEntity);
     }
 
     @Override
     public IDeviceField getDeviceFieldByHardwareId(String hardwareId) {
         DeviceFieldEntity deviceFieldEntity = deviceFieldRepository.findByHardwareid(hardwareId);
+        if (ObjectUtils.isEmpty(deviceFieldEntity) ){
+            return null;
+        }
         return DeviceField.copy(deviceFieldEntity);
     }
 
