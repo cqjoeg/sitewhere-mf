@@ -143,6 +143,7 @@
   },
   "includes":{
         "CreateInterface":"$t(public.Create)$t(public.Interface)",
+        "EditInterface":"$t(public.Edit)$t(public.Interface)",
        "Desc":"$t(public.Description)",
        "Center":"中心",
        "Zoom":"缩放",

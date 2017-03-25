@@ -160,6 +160,7 @@
   },
   "includes":{
       "CreateInterface":"$t(public.Create)$t(public.Interface)",
+    "EditInterface":"$t(public.Edit)$t(public.Interface)",
        "Desc":"Desc",
        "Center":"Center",
        "Zoom":"Zoom",
@@ -302,6 +303,7 @@
        },
        "commonFunctions":{
           "AYSTYWTDDSW":"$t(public.msg.areyousure) $t(public.msg.delete) $t(public.device) $t(public.Specification) with",
+          "AYSDI":"$t(public.msg.areyousure) $t(public.msg.delete) $t(public.device) $t(public.Interface) with",
           "UTDS":"$t(public.Unable) to $t(public.msg.delete) $t(public.Specification).",
           "DD":"$t(public.Delete) $t(public.Device)",
           "AYSTYWTDDWD":"$t(public.msg.areyousure) $t(public.msg.delete) $t(public.device) with $t(public.hardware)",

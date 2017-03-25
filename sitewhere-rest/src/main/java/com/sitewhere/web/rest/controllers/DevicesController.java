@@ -85,7 +85,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 @RequestMapping(value = "/devices")
 @Api(value = "devices", description = "Operations related to SiteWhere devices.")
 @DocumentedController(name = "Devices")
-public class DevicesController extends RestController {
+public class
+DevicesController extends RestController {
 
 	/** Static logger instance */
 	private static Logger LOGGER = Logger.getLogger(DevicesController.class);

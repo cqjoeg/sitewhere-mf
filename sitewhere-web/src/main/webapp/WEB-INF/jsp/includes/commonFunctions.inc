@@ -32,6 +32,33 @@
 		handleError(jqXHR, i18next("includes.commonFunctions.UTDS"));
 	}
 
+
+    /** Delete a interface based on its token */
+    function swInterfaceDelete(hardwareId, methodName, successCallback) {
+        swSuccessCallback = successCallback;
+        swConfirm(i18next("public.DeleteSpecification"),
+            i18next("includes.commonFunctions.AYSDI") + " "
+            + "hardwareId '" + hardwareId+ "'And methodName'"+ methodName+"'?", function(result) {
+                if (result) {
+                    $.deleteAuthJSON(
+                        "${pageContext.request.contextPath}/api/device/interface/"+ hardwareId + "/" + methodName,
+                        "${basicAuth}",
+                        "${tenant.authenticationToken}",
+                        swDeviceInterfaceDeleteSuccess,
+                        swDeviceInterfaceDeleteFail);
+                }
+            });
+    }
+    /** Handle successful device interface delete */
+    function swDeviceInterfaceDeleteSuccess() {
+        if (swSuccessCallback != null) {
+            swSuccessCallback();
+        }
+    }
+    /** Handle failed device interface delete */
+    function swDeviceInterfaceDeleteFail() {
+    }
+
 	/** Delete a device based on its hardware id */
 	function swDeviceDelete(hardwareId, tenantAuthToken, successCallback) {
 		swSuccessCallback = successCallback;

@@ -102,6 +102,14 @@ public class DeviceInterfaceController extends MFBaseController {
     }
 
 
+
+    @RequestMapping(value = "/{hardwareId}/{methodName}", method = RequestMethod.GET)
+    @ResponseBody
+    @Secured({SiteWhereRoles.REST})
+    public IDeviceInterface getDeviceInterface(@PathVariable String hardwareId, @PathVariable String methodName, HttpServletRequest servletRequest) {
+        return deviceInterfaceService.getDeviceInterfaceByHardwareIdAndMethodName(hardwareId, methodName);
+    }
+
     @RequestMapping(value = "/{hardwareId}", method = RequestMethod.GET)
     @ResponseBody
     @Secured({SiteWhereRoles.REST})
@@ -132,6 +140,7 @@ public class DeviceInterfaceController extends MFBaseController {
         List<IDeviceInterfaceEntity> pageList = deviceInterfaceService.listDeviceInterface(criteria);
         return new SearchResults<IDeviceInterfaceEntity>(pageList, pageList.size());
     }
+
 
 
     @RequestMapping(value = "/{hardwareid}/{methodname}", method = RequestMethod.POST)

@@ -76,18 +76,20 @@
 			<colgroup>
 				<col style="width: 50%;" />
 				<%--<col style="width: 30%;" />--%>
-				<col style="width: 50%;" />
+				<col style="width: 25%;" />
+				<col style="width: 25%;" />
 			</colgroup>
 			<thead>
 			<tr>
 				<th data-i18n="public.OperatioName"></th>
 				<%--<th data-i18n="public.Invocation"></th>--%>
 				<th data-i18n="public.Edit"></th>
+				<th data-i18n="public.Delete"></th>
 			</tr>
 			</thead>
 			<tbody>
 			<tr>
-				<td colspan="2"></td>
+				<td colspan="3"></td>
 			</tr>
 			</tbody>
 		</table>
@@ -122,7 +124,7 @@
 
 <%@ include file="../includes/templateDeviceInterfaceEntry.inc"%>
 <%@ include file="../includes/interfaceCreateDialog.inc"%>
-<%--<%@ include file="../includes/interfaceOperateDialog.inc"%>--%>
+<%@ include file="../includes/interfaceEditDialog.inc"%>
 
 <script>
 	/** Set sitewhere_title */
@@ -363,10 +365,21 @@
 //	}
 
 	/** Called to interface edit**/
-	function onViewInterfaceEdit(meathodId) {
+	function onViewInterfaceEdit(hardwareId,methodName) {
+		ieOpen(hardwareId, methodName,onInterfaceEdit);
+	}
+	/** Called to interface delete**/
+	function onViewInterfaceDelete(hardwareid,methodname){
+		swInterfaceDelete(hardwareid , methodname, function () {
+			deviceInterfaceDS.read();
+		});
 
 	}
 
+	/** Called when a interface    has been successfully Edit */
+	function onInterfaceEdit(){
+		deviceInterfaceDS.read();
+	}
 	/** Parses event response records to format dates */
 	function parseEventResults(response) {
 		$.each(response.results, function(index, item) {

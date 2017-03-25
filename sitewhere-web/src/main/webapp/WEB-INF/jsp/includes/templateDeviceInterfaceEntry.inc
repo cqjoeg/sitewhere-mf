@@ -18,5 +18,15 @@
 						onclick="onViewInterfaceEdit('#:hardwareid#','#:methodname#')"></i>
 			</div>
 		</td>
+
+		<td class="ellipsis" style="max-width: 90px;">
+			<div>
+				<i class="fa fa-close fa-white sw-action-glyph sw-edit-glyph"
+				title="#= i18next("includes.templateDeviceInterfaceEntry.ViewInterfaceEdit") #"
+				style="vertical-align: middle;"
+						onclick="onViewInterfaceDelete('#:hardwareid#','#:methodname#')"></i>
+			</div>
+		</td>
+
 	</tr>
 </script>

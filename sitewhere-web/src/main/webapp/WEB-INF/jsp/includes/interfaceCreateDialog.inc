@@ -100,8 +100,7 @@
         }).data("kendoDropDownList");
 
         /** Handle create dialog submit */
-        $('#ic-dialog-submit').click(
-            function(event) {
+        $('#ic-dialog-submit').click(function(event) {
                 event.preventDefault();
                 if (!icValidate()) {
                     return;
@@ -181,6 +180,9 @@
         // Reset form and fielList.
         $('#ic-general-form')[0].reset();
         icMetadataDS.data(new Array());
+
+        //从 device detail.jsp 上取值 赋值
+        $('#ic-hardware-id').val(hardwareId);
 
         // Select first tab.
         icTabs.select(0);

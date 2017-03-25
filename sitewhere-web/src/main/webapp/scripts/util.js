@@ -24,6 +24,3 @@ function hasObj(obj,str){
     }
     return false;
 }
-
-
-
